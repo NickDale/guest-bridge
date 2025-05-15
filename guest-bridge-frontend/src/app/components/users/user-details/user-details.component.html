@@ -1,0 +1,14 @@
+<div class="container">
+    <h2 *ngIf="user">{{ user.full_name }}</h2>
+    
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link" routerLink="profil" routerLinkActive="active">Profil</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="accommodations" routerLinkActive="active">Szálláshelyek</a>
+      </li>
+    </ul>
+    <router-outlet></router-outlet>
+  </div>
+  

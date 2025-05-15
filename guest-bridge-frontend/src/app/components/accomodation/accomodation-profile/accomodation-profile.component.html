@@ -1,0 +1,88 @@
+<h1>dfgdsfdsfdsfdsfsdfdsdsfdsf  -- {{accommodation?.id}}</h1>
+<div *ngIf="loading" class="spinner-wrapper">
+  <mat-spinner diameter="50" strokeWidth="5" color="primary"></mat-spinner>
+</div>
+
+<div *ngIf="!loading && accommodation">
+
+  <div class="profile-container">
+    <div class="header">
+      <h5>Részletek - {{ accommodation.name }}</h5>
+      <div class="actions">
+        <button (click)="toggleEdit()" [ngClass]="isEditing ? 'btn btn-outline-danger':'btn btn-outline-primary'">
+          <i class="bi" [ngClass]="isEditing ? 'bi-x' : 'bi-pencil'"></i>
+          {{ isEditing ? 'Cancel' : 'Edit' }}
+        </button>
+        <!-- <button (click)="openChangePasswordDialog()" class="btn btn-outline-secondary">
+          Change Password</button> -->
+      </div>
+    </div>
+
+    <div class="columns">
+      <div class="column">
+        <form [formGroup]="accomodationForm" (ngSubmit)="save()">
+          <div class="field">
+            <label>Name:</label>
+            <input formControlName="name" />
+            <div *ngIf="accomodationForm.controls['name'].invalid && accomodationForm.controls['name'].touched"
+              class="error">
+              Name is required.
+            </div>
+          </div>
+          <div class="field">
+            <label>address:</label>
+            <input formControlName="address" />
+            <div *ngIf="accomodationForm.controls['address'].invalid && accomodationForm.controls['address'].touched"
+              class="error">
+              address validáció failed
+            </div>
+          </div>
+          <div class="field">
+            <label>kapcsolattartó neve:</label>
+            <input />
+          </div>
+          <div class="field">
+            <label>kapcsolattartó telefonszáma:</label>
+            <input  />
+          </div>
+          <div class="field">
+            <label>kapcsolattartó emailcíme:</label>
+            <input />
+          </div>
+          <div class="field">
+            <label>NTAK reg szám</label>
+            <input />
+          </div>
+
+          <!-- more fields -->
+        </form>
+      </div>
+
+      <!-- Billing Info Oszlop -->
+      <div class="column">
+        <div class="field">
+          <app-connection-comp [accommodationId]="accommodationId" [type]="szallas_hu"></app-connection-comp>
+        </div>
+        <div class="field">
+          <app-connection-comp [accommodationId]="accommodationId" [type]='vendegem'></app-connection-comp>
+        </div>
+      </div>
+    </div>
+
+    <button *ngIf="isEditing" (click)="save()" [disabled]="accomodationForm.invalid">Save</button>
+  </div>
+
+  <!-- <p><strong>Státusz:</strong>
+    <span [ngClass]="{ 'text-success': accommodationDetail.active, 'text-danger': !accommodationDetail.active }">
+      {{ accommodationDetail.active ? 'Aktív' : 'Inaktív' }}
+    </span>
+  </p> -->
+
+
+  <!-- 🔽 Két komponens egymás mellett -->
+  <!-- <div class="row mt-4">
+    <div class="col-md-6">
+      <app-accommodation-config [accommodationId]="accommodationId"></app-accommodation-config>
+    </div>
+  </div> -->
+</div>

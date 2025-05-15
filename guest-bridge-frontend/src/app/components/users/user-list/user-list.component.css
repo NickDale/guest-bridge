@@ -1,0 +1,35 @@
+/* Hover effekt a sorokra */
+tr:hover {
+  background-color: #f5f5f5;
+}
+
+/* Kéz kurzor a kattintható sorokra */
+tbody tr {
+  cursor: pointer;
+}
+
+/* Lapozás igazítása középre */
+nav {
+  display: flex;
+  justify-content: center;
+}
+
+/* Aktív oldal kiemelése (Bootstrap aktív osztály) */
+.page-item.active .page-link {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: white;
+}
+
+/* Lapozás gombok */
+.page-link {
+  cursor: pointer;
+}
+
+#pageSizeSelect {
+  min-width: 80px;
+}
+
+td.text-end button {
+  vertical-align: middle;
+}

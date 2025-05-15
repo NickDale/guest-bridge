@@ -1,0 +1,55 @@
+/* Topbar stílus */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 16px;
+    background-color: #1976d2;
+    color: white;
+    height: 60px;
+  }
+  
+  /* Bal oldali gomb */
+  .home-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+  }
+  
+  /* Cím */
+  .app-title {
+    margin-left: 10px;
+    font-weight: 500;
+    font-size: 1.2rem;
+    flex-grow: 1;
+    white-space: nowrap;
+  }
+  
+  /* Jobb oldal */
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.95rem;
+  }
+  
+  .logout-button {
+    background-color: #d32f2f;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .logout-button:hover {
+    background-color: #c62828;
+  }
+  
+  /* Tördelés */
+  .spacer {
+    flex-grow: 1;
+  }
+  

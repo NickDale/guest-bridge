@@ -1,0 +1,60 @@
+<div *ngIf="!loading" class="profile-container">
+  <div class="header">
+    <h2>User Profile</h2>
+    <div class="actions">
+      <button (click)="toggleEdit()" [ngClass]="isEditing ? 'btn btn-outline-danger':'btn btn-outline-primary'">
+        <i class="bi" [ngClass]="isEditing ? 'bi-x' : 'bi-pencil'"></i>
+        {{ isEditing ? 'Cancel' : 'Edit' }}
+      </button>
+      <button (click)="openChangePasswordDialog()" class="btn btn-outline-secondary">
+        Change Password</button>
+    </div>
+  </div>
+
+  <div class="columns">
+    <div class="column">
+      <h3>User Info</h3>
+      <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+        <div class="field">
+          <label>Name:</label>
+          <input formControlName="full_name" />
+          <div *ngIf="userForm.controls['full_name'].invalid && userForm.controls['full_name'].touched" class="error">
+            Name is required.
+          </div>
+        </div>
+        <div class="field">
+          <label>Email:</label>
+          <input formControlName="email" />
+          <div *ngIf="userForm.controls['email'].invalid && userForm.controls['email'].touched" class="error">
+            Email address must be valid.
+          </div>
+        </div>
+        <div class="field">
+          <label>Username:</label>
+          <input formControlName="username" />
+          <div *ngIf="userForm.controls['username'].invalid && userForm.controls['username'].touched" class="error">
+            Username is required.
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Billing Info Oszlop -->
+    <div class="column">
+      <h3>Billing Info</h3>
+      <div class="field">
+        <label>Billing Address:</label>
+        <input formControlName="billingAddress" />
+        <div *ngIf="userForm.controls['billingAddress'].invalid && userForm.controls['billingAddress'].touched"
+          class="error">
+          Billing address is required.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button *ngIf="isEditing" (click)="onSubmit()" [disabled]="userForm.invalid">Save</button>
+</div>
+<div *ngIf="loading" class="spinner-wrapper">
+  <mat-spinner diameter="50" strokeWidth="5" color="primary"></mat-spinner>
+</div>

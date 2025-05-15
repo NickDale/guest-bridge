@@ -1,0 +1,84 @@
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <span>Összesen: {{ filteredAccommodations.length }} db</span>
+        </div>
+        <div>
+            <input type="text" class="form-control mb-3" placeholder="Szűrés..." [(ngModel)]="searchText"
+                (input)="applyFilter()" />
+        </div>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Azonosító</th>
+                <th>Név</th>
+                <th>Státusz</th>
+                <th>Cím</th>
+                <th>max kapacitás</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let accommodation of pagedAccomodations" style="cursor: pointer;">
+                <td>{{ accommodation.id }}</td>
+                <td>{{ accommodation.name }}</td>
+                <td>
+                    <span [ngClass]="{
+                        'text-success': accommodation.active,
+                        'text-danger': !accommodation.active
+                      }">
+                        {{ accommodation.active ? '✔️' : '❌' }}
+                    </span>
+                </td>
+                <td>{{ accommodation.address}}</td>
+                <td> {{ accommodation.numberOfPlaces }} db férőhely</td>
+                <td class="text-end">
+                    <button class="btn btn-outline-primary btn-sm me-2" title="Szálláshely részletei"
+                        (click)="openDetail(accommodation.id)">
+                        <!-- data-bs-toggle="modal" data-bs-target="#accommodationDetailModal"> -->
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <nav *ngIf="filteredAccommodations.length > pageSize">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" [class.disabled]="currentPage === 1">
+                <a class="page-link" (click)="changePage(currentPage - 1)" aria-label="Előző">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+
+            <li class="page-item" [class.active]="page === currentPage" *ngFor="let page of totalPages">
+                <a class="page-link" (click)="changePage(page)">{{ page }}</a>
+            </li>
+
+            <li class="page-item" [class.disabled]="currentPage === totalPages.length">
+                <a class="page-link" (click)="changePage(currentPage + 1)" aria-label="Következő">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<!-- hafelugro modal ablakban akarom-->
+<!-- <div class="modal fade" id="accommodationDetailModal" tabindex="-1" aria-labelledby="accommodationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="accommodationModalLabel">Szálláshely részletei</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Bezárás"></button>
+        </div>
+        <div class="modal-body">
+          <app-accomodation-detail *ngIf="selectedAccommodationId" [accommodationId]="selectedAccommodationId"></app-accomodation-detail>
+        </div>
+      </div>
+    </div>
+  </div> -->
+<app-accomodation-detail 
+    *ngIf="selectedAccommodationId" 
+    [accommodationId]="selectedAccommodationId"></app-accomodation-detail>

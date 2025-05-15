@@ -1,0 +1,73 @@
+<div class="container mt-4">
+    <h2>Felhasználók</h2>
+
+    <input type="text" class="form-control mb-3" placeholder="Keresés név alapján..." [(ngModel)]="searchText"
+        (input)="applyFilter()" />
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Név</th>
+                <th>Email</th>
+                <th>Státusz</th>
+                <th>Szálláshelyek száma</th>
+                <th>Előfizetés típusa</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let user of paginatedUsers" style="cursor: pointer;">
+                <td>{{ user.full_name }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                    <span [ngClass]="{
+                        'text-success': user.active,
+                        'text-danger': !user.active
+                      }">
+                        {{ user.active ? '✔️' : '❌' }}
+                    </span>
+                </td>
+                <td> {{ !user.active ? '-' : user.subscriptionType }}</td>
+                <td> {{ user.numberOfAccommodations }} db</td>
+                <td class="text-end">
+                    <button class="btn btn-outline-primary btn-sm me-2" (click)="goToUser(user.id)">
+                      <i class="bi bi-eye"></i>
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm" (click)="deactivateUser(user.id)">
+                      <i class="bi bi-person-x"></i>
+                    </button>
+                  </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <label for="pageSizeSelect">Elemek száma oldalanként: </label>
+            <select id="pageSizeSelect" class="form-select d-inline-block w-auto ms-2" [(ngModel)]="pageSize"
+                (change)="changePage(1)">
+                <option *ngFor="let size of [5, 10, 15]" [value]="size">{{ size }}</option>
+            </select>
+        </div>
+        <div>
+            <span>Összesen: {{ filteredUsers.length }} user</span>
+        </div>
+    </div>
+    <nav *ngIf="filteredUsers.length > pageSize">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" [class.disabled]="currentPage === 1">
+                <a class="page-link" (click)="changePage(currentPage - 1)" aria-label="Előző">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+
+            <li class="page-item" [class.active]="page === currentPage" *ngFor="let page of totalPages">
+                <a class="page-link" (click)="changePage(page)">{{ page }}</a>
+            </li>
+
+            <li class="page-item" [class.disabled]="currentPage === totalPages.length">
+                <a class="page-link" (click)="changePage(currentPage + 1)" aria-label="Következő">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>

@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.env
+*.log
+venv/
+.env
+.idea/
+
+# Angular
+guest-bridge-frontend/node_modules/
+guest-bridge-frontend/dist/
+guest-bridge-frontend/*.log
+guest-bridge-frontend/.angular/cache/
+guest-bridge-frontend/.vscode/

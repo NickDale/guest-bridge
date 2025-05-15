@@ -1,0 +1,14 @@
+<div class="container">
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="[accommodationId, 'profil']" routerLinkActive="active">Adatok</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="[accommodationId, 'config']" routerLinkActive="active">Beállítások</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="[accommodationId, 'sync']" routerLinkActive="active">Korábbi szinkronizációk</a>
+    </li>
+  </ul>
+  <router-outlet></router-outlet>
+</div> 
