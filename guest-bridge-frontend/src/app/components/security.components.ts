@@ -10,7 +10,6 @@ export function isAdmin(user: { role?: string } | null | undefined): boolean {
 export const adminGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
   const router = inject(Router);
-  console.log("adminGuard")
   const user = auth.getUser();
 
   if (isAdmin(user)) {
@@ -24,9 +23,7 @@ export const adminGuard: CanActivateFn = () => {
 export const userDetailsGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
   const auth = inject(AuthService);
   const router = inject(Router);
-
-  console.log("userDetailsGuard")
-
+  
   const userIdParam = +route.params['id'];
   const currentUser = auth.getUser();
 
@@ -39,12 +36,9 @@ export const userDetailsGuard: CanActivateFn = (route: ActivatedRouteSnapshot) =
     return true;
   }
 
-  // Ha sima user, csak a saját id-jére mehet
-
   if (currentUser.id === userIdParam) {
     return true;
   } else {
-    // nem a saját oldala → vissza a saját profiljára
     router.navigate([`/users/${currentUser.id}`]);
     return false;
   }

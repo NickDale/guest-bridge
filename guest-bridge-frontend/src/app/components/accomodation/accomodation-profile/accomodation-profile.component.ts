@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Validators, FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Accomodation } from 'src/app/models/accommodation';
 import { ConnectionType } from 'src/app/models/property-connection';
@@ -17,15 +17,16 @@ export class AccomodationProfileComponent {
   isEditing = false;
   accommodation?: Accomodation;
 
-  accomodationForm = new FormGroup({
-    name: new FormControl({ value: this.accommodation?.name, disabled: !this.isEditing }, Validators.required),
-    address: new FormControl({ value: this.accommodation?.address, disabled: !this.isEditing }, [Validators.required])
+  accomodationForm = this.fb.group({
+    name: [{ value: this.accommodation?.name, disabled: !this.isEditing }, Validators.required],
+    address: [{ value: this.accommodation?.address, disabled: !this.isEditing }, [Validators.required]]
     //todo: add more
     //  address2: new FormControl({ value: this.accommodation?.address, disabled: !this.isEditing }, [Validators.required])
 
   });
 
   constructor(
+    private fb: FormBuilder,
     private route: ActivatedRoute,
     private accommodationService: AccommodationService
   ) { }
@@ -94,8 +95,5 @@ export class AccomodationProfileComponent {
     });
     this.isEditing ? this.accomodationForm.enable() : this.accomodationForm.disable();
   }
-
-
-
 
 }

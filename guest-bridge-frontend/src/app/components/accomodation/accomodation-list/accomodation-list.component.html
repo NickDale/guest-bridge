@@ -16,7 +16,6 @@
                 <th>Név</th>
                 <th>Státusz</th>
                 <th>Cím</th>
-                <th>max kapacitás</th>
             </tr>
         </thead>
         <tbody>
@@ -32,7 +31,6 @@
                     </span>
                 </td>
                 <td>{{ accommodation.address}}</td>
-                <td> {{ accommodation.numberOfPlaces }} db férőhely</td>
                 <td class="text-end">
                     <button class="btn btn-outline-primary btn-sm me-2" title="Szálláshely részletei"
                         (click)="openDetail(accommodation.id)">

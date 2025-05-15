@@ -39,7 +39,6 @@ export class AccomodationListComponent {
     );
   }
 
-
   get pagedAccomodations(): Accomodation[] {
     const start = (this.currentPage - 1) * this.pageSize;
     return this.filteredAccommodations.slice(start, start + this.pageSize);
@@ -54,13 +53,11 @@ export class AccomodationListComponent {
   }
 
   openModal(accommodationId: number): void {
-    console.log("selected: " + accommodationId)
     this.selectedAccommodationId = accommodationId;
   }
 
   openDetail(id: number) {
     this.selectedAccommodationId = id;
-    console.log("navigate..... and selectedAccommodationId ="+this.selectedAccommodationId)
     this.router.navigate([id, 'profil'], { relativeTo: this.route });
   }
 

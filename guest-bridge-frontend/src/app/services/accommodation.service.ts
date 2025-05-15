@@ -64,8 +64,13 @@ export class AccommodationService {
     );
   }
 
-  getById(id: number): Observable<Accomodation | undefined> {
-    return of(this.accomodations.find(a => a.id === id));
+  getById(accommodationId: number): Observable<Accomodation> {
+    return this.userService.selectedUser$.pipe(
+      filter(user => !!user),
+      switchMap(user =>
+        this.http.get<Accomodation>(`${this.apiUrl}/users/${user!.id}/accommodations/${accommodationId}`)
+      )
+    );
   }
 
   setSelected(accomodation: Accomodation) {

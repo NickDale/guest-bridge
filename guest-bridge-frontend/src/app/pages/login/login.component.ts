@@ -20,12 +20,9 @@ export class LoginComponent {
     this.authService.login(this.username, this.password).subscribe(success => {
       if (success) {
         const user = this.authService.getUser();
-        console.log('Logged user:', user);
         if (!user) {
-          console.log("to login??")
           this.router.navigate([`/login`]);
         } else {
-          console.log("to where??")
           let navigateTo = isAdmin(user) ? ['/users'] : ['/users', user.id];
           this.router.navigate(navigateTo).then(success => {
             console.log('Navigáció sikeres?', success);

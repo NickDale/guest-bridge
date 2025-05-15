@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs/internal/Subscription';
+import { AuthService } from 'src/app/services/authentication.service';
 
 @Component({
   selector: 'app-top-bar',
@@ -7,25 +9,38 @@ import { Router } from '@angular/router';
   styleUrls: ['./top-bar.component.css']
 })
 export class TopBarComponent {
-  isLoggedIn = false; 
-  username: string | null = null;
+  username?: string;
+  isLoggedIn: boolean = false;
+  private authSubscription?: Subscription;
+  
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) { }
 
-  //TODO: finish
-  constructor(private router: Router) {
-    this.username = localStorage.getItem('username') ?? null;
-    this.isLoggedIn = !!this.username;
+  ngOnInit(): void {
+   // this.init();
+    this.authSubscription = this.authService.loggedIn$.subscribe(loggedIn => {
+      this.isLoggedIn = loggedIn;
+      this.username = loggedIn ? this.authService.getUserName() : undefined;
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.authSubscription?.unsubscribe();
   }
 
   navigateHome(): void {
-    if (this.isLoggedIn) {
-      this.router.navigate(['/users']); // vagy ['/users', id] később
-    } else {
-      this.router.navigate(['/']);
-    }
+    this.router.navigate([this.isLoggedIn ? '/users' : '/']);
   }
 
   logout(): void {
-    localStorage.clear();
+    this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  init(){
+    this.isLoggedIn = false;
+    this.username = undefined; 
   }
 }

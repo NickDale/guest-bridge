@@ -75,7 +75,7 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
         response.append({
             "id": id,
             "name": display_name,
-            "active":  active,
+            "active": active,
             "address": f'({country}) {postcode} {city}, {street} {street_number}'
         })
 
@@ -83,8 +83,8 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
 
 
 @router.get("/{user_id}/accommodations/{accommodation_id}", response_model=None)
-def get_accommodation_details(user_id: int, db: Session = Depends(get_db)):
-    results = (
+def get_accommodation_details(user_id: int, accommodation_id: int, db: Session = Depends(get_db)):
+    result = (
         db.query(
             Accommodation.id,
             Accommodation.display_name,
@@ -98,17 +98,21 @@ def get_accommodation_details(user_id: int, db: Session = Depends(get_db)):
         .join(UserAccommodation, UserAccommodation.accommodation_id == Accommodation.id)
         .join(User, User.id == UserAccommodation.user_id)
         .outerjoin(Address, Address.id == User.billing_address_id)
-        .filter(UserAccommodation.user_id == user_id)
-        .all()
+        .filter(
+            UserAccommodation.user_id == user_id,
+            Accommodation.id == accommodation_id
+        )
+        .first()
     )
 
-    response = []
-    for id, display_name, active, country, postcode, city, street, street_number in results:
-        response.append({
-            "id": id,
-            "name": display_name,
-            "active":  active,
-            "address": f'({country}) {postcode} {city}, {street} {street_number}'
-        })
+    if result is None:
+        raise HTTPException(status_code=404, detail="Accommodation not found")
 
-    return response
+    id, display_name, active, country, postcode, city, street, street_number = result
+
+    return {
+        "id": id,
+        "name": display_name,
+        "active": active,
+        "address": f'({country}) {postcode} {city}, {street} {street_number}'
+    }

@@ -1,29 +1,34 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
-import { Observable, map, catchError, of } from "rxjs";
+import { Observable, map, catchError, of, BehaviorSubject } from "rxjs";
 import { environment } from '../../enviroments/environment';
 
 
-export interface LoginResponse {
+export interface LoggedUser {
   id: number;
   role: 'admin' | 'user';
-  // akár token is, ha van: token: string;
+  full_name: string
 }
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private apiUrl = environment.apiUrl + '/authentications';
+  private loggedInSubject = new BehaviorSubject<boolean>(this.isLoggedIn());
+  public loggedIn$ = this.loggedInSubject.asObservable();
 
   constructor(private http: HttpClient, private router: Router) { }
-  login(username: string, password: string): Observable<boolean> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, { username: username, password: password }).pipe(
-      map(response => {
-        sessionStorage.setItem('userId', response.id.toString());
-        sessionStorage.setItem('role', response.role);
 
-        console.log('RESPONSEEEE')
-        console.log(response)
+  login(username: string, password: string): Observable<boolean> {
+    return this.http.post<LoggedUser>(`${this.apiUrl}/login`, { username: username, password: password }).pipe(
+      map(response => {
+        const user = {
+          id: response.id,
+          name: response.full_name,
+          role: response.role
+        };
+        sessionStorage.setItem('user', JSON.stringify(user));
+        this.loggedInSubject.next(true);
         return true;
       }),
       catchError(err => {
@@ -33,33 +38,27 @@ export class AuthService {
     );
   }
 
-  logout() {
-    sessionStorage.clear();
-    this.router.navigate(['/login']);
-  }
-
-  getUser(): { id: number, role: 'user' | 'admin' } | null {
-    const id = +sessionStorage.getItem('userId')!;
-    const role = sessionStorage.getItem('role') as 'user' | 'admin' | null;
-
-    if (id && role) {
-      return { id, role };
+  getUser(): LoggedUser | null {
+    const userJson = sessionStorage.getItem('user');
+    if (userJson) {
+      const user = JSON.parse(userJson);
+      console.log(user.id, user.name, user.role);
+      return user;
     }
     return null;
   }
 
-  isLoggedIn(): boolean {
-    return this.getUser() !== null;
+  getUserName() {
+    const user = sessionStorage.getItem('user');
+    return user ? JSON.parse(user).name : undefined;
   }
 
-  hasPermission(targetUserId: number): boolean {
-    const user = this.getUser();
-    if (!user) {
-      return false;
-    }
-    if (user.role === 'admin') {
-      return true;
-    }
-    return user.id === targetUserId;
+  isLoggedIn(): boolean {
+    return !!sessionStorage.getItem('user');
+  }
+
+  logout(): void {
+    sessionStorage.clear();
+    this.loggedInSubject.next(false);
   }
 }
