@@ -3,12 +3,11 @@ import requests
 import re
 from colorama import Fore, Style
 
-from szallas_hu.constant import DEFAULT_DAY_DELAY
-from szallas_hu.szallas_hu import Reservation
-from vendegem.helper import base_url, \
-    auth_url, accommodation_url, reservations_url, default_headers, my_rooms_url, \
-    Accommodation, vendegem_hun_id, vendegem_guest_status, vendegem_reservation_mode, \
-    vendegem_reservation_type, DATE_FORMAT, new_reservation
+from app.services.szallas_hu.constatnt import DEFAULT_DAY_DELAY
+from app.services.szallas_hu.szallas_hu_connector import Reservation
+from app.services.vendegem.helper import DATE_FORMAT, base_url, default_headers, auth_url, new_reservation, \
+    vendegem_hun_id, vendegem_reservation_mode, vendegem_reservation_type, vendegem_guest_status, reservations_url, \
+    accommodation_url, Accommodation, my_rooms_url
 
 
 class Vendegem:
@@ -174,3 +173,13 @@ class Vendegem:
             for item in response.json()
         ]
         accommodation.rooms = rooms
+
+    def visible_accommodations(self):
+        response = self.session.get(
+            url=base_url + accommodation_url,
+            headers=default_headers
+        )
+        resp = response.json()
+        print(resp)
+
+        return resp

@@ -3,7 +3,7 @@ export interface User {
     full_name: string;
     username:string;
     email: string;
-    active:boolean;
+    status:string;
     subscriptionType:string;
     numberOfAccommodations:number;
 

@@ -1,3 +1,6 @@
+from datetime import datetime
+from typing import Optional
+
 from pydantic import BaseModel, EmailStr
 
 
@@ -33,10 +36,21 @@ class UserRead(BaseModel):
     id: int
     username: str
     full_name: str
+    status: str
     email: str
 
     class Config:
         orm_mode = True
+
+
+class UserDetail(BaseModel):
+    id: int
+    username: str
+    email: str
+    full_name: str
+    type: str
+    activation_date: Optional[datetime]
+    blocked_date: Optional[datetime]
 
 
 class AccommodationResponse:

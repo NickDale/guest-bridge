@@ -8,8 +8,8 @@ from app.services.vendegem.vendegem_connector import Vendegem
 
 class SyncProcess:
     def __init__(self):
-        self.szallas_hu_app = SzallasHu(user='geletag94@gmail.com', password='')
-        self.vendegem_app = Vendegem(user='vendegem.sync@gmail.com', password='')
+        self.szallas_hu_app = SzallasHu(user='', password='')
+        self.vendegem_app = Vendegem(user='', password='')
 
     def start_sync(self, to_date, from_date=datetime.now()):
         stored_reservations = self.vendegem_app.reservations(from_date, to_date)

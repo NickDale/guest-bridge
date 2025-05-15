@@ -10,8 +10,8 @@
                 <th>Név</th>
                 <th>Email</th>
                 <th>Státusz</th>
-                <th>Szálláshelyek száma</th>
                 <th>Előfizetés típusa</th>
+                <th>Szálláshelyek száma</th>
             </tr>
         </thead>
         <tbody>
@@ -20,13 +20,19 @@
                 <td>{{ user.email }}</td>
                 <td>
                     <span [ngClass]="{
-                        'text-success': user.active,
-                        'text-danger': !user.active
+                        'text-success': user.status === 'active',
+                        'text-danger': user.status === 'blocked',
+                        'text-warning': user.status === 'pending'
                       }">
-                        {{ user.active ? '✔️' : '❌' }}
+                      {{
+                        user.status === 'active' ? '✔️' :
+                        user.status === 'blocked' ? '❌' :
+                        user.status === 'pending' ? '⏳' :
+                        ''
+                      }}
                     </span>
                 </td>
-                <td> {{ !user.active ? '-' : user.subscriptionType }}</td>
+                <td> {{ user.subscriptionType }}</td>
                 <td> {{ user.numberOfAccommodations }} db</td>
                 <td class="text-end">
                     <button class="btn btn-outline-primary btn-sm me-2" (click)="goToUser(user.id)">

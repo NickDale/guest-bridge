@@ -1,118 +1,39 @@
 from typing import List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from fastapi.params import Query
-from sqlalchemy import func, text
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session
 
-from app.models.models import User, UserType, Accommodation, UserAccommodation, Address
+from app.core.database import get_db
 from app.routers import schemas
-from app.services.database import get_db
+from app.services import user_service
 
 router = APIRouter(prefix="/users", tags=["users"])
 
 
 @router.post("/", response_model=List[schemas.UserRead])
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    db_user = db.query(User).filter(User.email == user.email).first()
-    if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    new_user = User(**user.dict())
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-    return new_user
+    return user_service.create_user(user, db)
 
 
-# GET /users – összes felhasználó lekérése
-@router.get("/", response_model=list[schemas.UserRead])
+@router.get("/", response_model=None)
 def read_users(expect: Optional[str] = Query(None),
                types: Optional[str] = Query(None),
                db: Session = Depends(get_db)):
-    if types:
-        typess = [t.strip().lower() for t in types.split(',')]
-        users = db.query(User).join(User.user_type).filter(func.lower(UserType.name).in_(typess)).all()
-    else:
-        users = db.query(User).all()
-
-    if expect:
-        users = db.query(User).join(User.user_type).filter(
-            func.lower(UserType.name).not_in([t.strip().lower() for t in expect.split(',')])
-        ).all()
-    return users
+    return user_service.list_users_by_filter(expect, types, db)
 
 
-@router.get("/{user_id}", response_model=schemas.UserRead, response_model_by_alias=True)
+@router.get("/{user_id}", response_model=schemas.UserDetail)
 def read_user(user_id: int, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user
+    return user_service.find_user_by_id(user_id, db)
 
 
 @router.get("/{user_id}/accommodations", response_model=None)
 def read_user(user_id: int, db: Session = Depends(get_db)):
-    results = (
-        db.query(
-            Accommodation.id,
-            Accommodation.display_name,
-            Accommodation.active,
-            Address.country,
-            Address.postcode,
-            Address.city,
-            Address.street,
-            Address.street_number
-        )
-        .join(UserAccommodation, UserAccommodation.accommodation_id == Accommodation.id)
-        .join(User, User.id == UserAccommodation.user_id)
-        .outerjoin(Address, Address.id == User.billing_address_id)
-        .filter(UserAccommodation.user_id == user_id)
-        .all()
-    )
-
-    response = []
-    for id, display_name, active, country, postcode, city, street, street_number in results:
-        response.append({
-            "id": id,
-            "name": display_name,
-            "active": active,
-            "address": f'({country}) {postcode} {city}, {street} {street_number}'
-        })
-
-    return response
+    return user_service.get_accommodations_by_user_id(user_id, db)
 
 
 @router.get("/{user_id}/accommodations/{accommodation_id}", response_model=None)
 def get_accommodation_details(user_id: int, accommodation_id: int, db: Session = Depends(get_db)):
-    result = (
-        db.query(
-            Accommodation.id,
-            Accommodation.display_name,
-            Accommodation.active,
-            Address.country,
-            Address.postcode,
-            Address.city,
-            Address.street,
-            Address.street_number
-        )
-        .join(UserAccommodation, UserAccommodation.accommodation_id == Accommodation.id)
-        .join(User, User.id == UserAccommodation.user_id)
-        .outerjoin(Address, Address.id == User.billing_address_id)
-        .filter(
-            UserAccommodation.user_id == user_id,
-            Accommodation.id == accommodation_id
-        )
-        .first()
-    )
+    return user_service.get_accommodation_detail(user_id, accommodation_id, db)
 
-    if result is None:
-        raise HTTPException(status_code=404, detail="Accommodation not found")
-
-    id, display_name, active, country, postcode, city, street, street_number = result
-
-    return {
-        "id": id,
-        "name": display_name,
-        "active": active,
-        "address": f'({country}) {postcode} {city}, {street} {street_number}'
-    }

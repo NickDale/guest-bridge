@@ -15,19 +15,7 @@ export class UserService {
   users: User[] = []
 
   constructor(private http: HttpClient) {
-    this.init();
-  }
-  init(): void {
-    this.users = Array.from({ length: 25 }, (_, i) => ({
-      id: i + 1,
-      full_name: `User ${i + 1}`,
-      email: `user${i + 1}@example.com`,
-      active: Math.random() < 0.5,
-      subscriptionType: 'trial',
-      numberOfAccommodations: Math.floor(Math.random() * 4) + 1,
-      username: `user_${i + 1}`,
-      billingAddress: 'nincs megadva'
-    }));
+   // this.init();
   }
 
   mockedData() {
