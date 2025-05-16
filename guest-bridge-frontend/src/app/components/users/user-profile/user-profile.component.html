@@ -6,15 +6,20 @@
         <i class="bi" [ngClass]="isEditing ? 'bi-x' : 'bi-pencil'"></i>
         {{ isEditing ? 'Cancel' : 'Edit' }}
       </button>
+
+      <button *ngIf="isEditing" (click)="onSubmit()" [disabled]="userForm.invalid" class="btn btn-success">
+        <i class="bi bi-check-circle me-1">Save</i>
+      </button>
+
       <button (click)="openChangePasswordDialog()" class="btn btn-outline-secondary">
         Change Password</button>
     </div>
   </div>
 
-  <div class="columns">
-    <div class="column">
-      <h3>User Info</h3>
-      <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+    <div class="columns">
+      <div class="column">
+        <h3>User Info</h3>
         <div class="field">
           <label>Name:</label>
           <input formControlName="full_name" />
@@ -31,29 +36,117 @@
         </div>
         <div class="field">
           <label>Username:</label>
-          <input formControlName="username" />
-          <div *ngIf="userForm.controls['username'].invalid && userForm.controls['username'].touched" class="error">
-            Username is required.
+          <span>{{ user.username }}</span>
+        </div>
+        <div class="field">
+          <label>status:</label>
+          <span>{{ user.status }}</span>
+        </div>
+        <div class="field">
+          <label>Subscription:</label>
+          <span>{{ user.subscription_type }}</span>
+        </div>
+        <div class="columns">
+          <div class="column">
+            <div class="field">
+              <label>Created:</label>
+              <span>{{ user.created_date | date: 'yyyy-MM-dd' }}</span>
+            </div>
+          </div>
+          <div class="column">
+            <div class="field">
+              <label>Activated:</label>
+              <span>{{ user.activation_date | date: 'yyyy-MM-dd' }}</span>
+            </div>
           </div>
         </div>
-      </form>
-    </div>
+      </div>
 
-    <!-- Billing Info Oszlop -->
-    <div class="column">
-      <h3>Billing Info</h3>
-      <div class="field">
-        <label>Billing Address:</label>
-        <input formControlName="billingAddress" />
-        <div *ngIf="userForm.controls['billingAddress'].invalid && userForm.controls['billingAddress'].touched"
-          class="error">
-          Billing address is required.
+      <!-- Billing Info Oszlop -->
+      <div class="column">
+        <h3>Billing Info</h3>
+        <div class="field">
+          <label>Name</label>
+          <input formControlName="billingName" />
+          <div *ngIf="userForm.controls['billingName'].invalid && userForm.controls['billingName'].touched"
+            class="error">
+            Billing address is required.
+          </div>
+        </div>
+        <div class="field">
+          <label>Email:</label>
+          <input formControlName="billingEmail" />
+          <div *ngIf="userForm.controls['billingEmail'].invalid && userForm.controls['billingEmail'].touched"
+            class="error">
+            Billing address is required.
+          </div>
+        </div>
+        <div class="field">
+          <label>Tax</label>
+          <input formControlName="tax" />
+          <div *ngIf="userForm.controls['tax'].invalid && userForm.controls['tax'].touched" class="error">
+            Billing address is required.
+          </div>
+        </div>
+        <div class="field">
+          <label>Country:</label>
+          <input formControlName="country" />
+          <div *ngIf="userForm.controls['country'].invalid && userForm.controls['country'].touched" class="error">
+            Billing address is required.
+          </div>
+        </div>
+
+        <div class="columns">
+          <div class="column">
+            <div class="field">
+              <label>postcode:</label>
+              <input formControlName="postcode" />
+              <div *ngIf="userForm.controls['postcode'].invalid && userForm.controls['postcode'].touched" class="error">
+                Billing address is required.
+              </div>
+            </div>
+            <div class="field">
+              <label>street</label>
+              <input formControlName="street" />
+              <div *ngIf="userForm.controls['street'].invalid && userForm.controls['street'].touched" class="error">
+                Billing address is required.
+              </div>
+            </div>
+            <div class="field">
+              <label>Floor:</label>
+              <input formControlName="floor" />
+              <div *ngIf="userForm.controls['floor'].invalid && userForm.controls['floor'].touched" class="error">
+                Billing address is required.
+              </div>
+            </div>
+
+          </div>
+
+          <div class="column">
+            <div class="field">
+              <label>city:</label>
+              <input formControlName="city" />
+              <div *ngIf="userForm.controls['city'].invalid && userForm.controls['city'].touched" class="error">
+                Billing address is required.
+              </div>
+            </div>
+            <div class="field">
+              <label>Street Nr</label>
+              <input formControlName="streetNr" />
+              <div *ngIf="userForm.controls['streetNr'].invalid && userForm.controls['streetNr'].touched" class="error">
+                Billing address is required.
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Door:</label>
+              <input formControlName="door" />
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-
-  <button *ngIf="isEditing" (click)="onSubmit()" [disabled]="userForm.invalid">Save</button>
+  </form>
 </div>
 <div *ngIf="loading" class="spinner-wrapper">
   <mat-spinner diameter="50" strokeWidth="5" color="primary"></mat-spinner>

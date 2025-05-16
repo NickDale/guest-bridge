@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { User } from 'src/app/models/user';
 import { UserService } from 'src/app/services/user.service';
 import { ChangePasswordDialogComponent } from '../../change-password-dialog/change-password-dialog.component';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-user-profile',
@@ -23,8 +23,16 @@ export class UserProfileComponent {
   userForm = this.fb.group({
     full_name: [{ value: '', disabled: !this.isEditing }, Validators.required],
     email: [{ value: '', disabled: !this.isEditing }, [Validators.required, Validators.email]],
-    username: [{ value: '', disabled: !this.isEditing }, Validators.required],
-    billingAddress: [{ value: '', disabled: !this.isEditing }, Validators.required]
+    billingName: [{ value: '', disabled: !this.isEditing }, Validators.required],
+    billingEmail: [{ value: '', disabled: !this.isEditing }],
+    tax: [{ value: '', disabled: !this.isEditing }],
+    country: [{ value: '', disabled: !this.isEditing }],
+    postcode: [{ value: '', disabled: !this.isEditing }],
+    city: [{ value: '', disabled: !this.isEditing }],
+    street: [{ value: '', disabled: !this.isEditing }],
+    streetNr: [{ value: '', disabled: !this.isEditing }],
+    floor: [{ value: '', disabled: !this.isEditing }],
+    door: [{ value: '', disabled: !this.isEditing }],
   });
 
   ngOnInit() {
@@ -55,7 +63,16 @@ export class UserProfileComponent {
     this.userForm.patchValue({
       full_name: this.user.full_name,
       email: this.user.email,
-      username: this.user.username
+      billingName: this.user.billing_info.name,
+      billingEmail: this.user.billing_info.email,
+      tax: this.user.billing_info.tax,
+      country: this.user.billing_info.country,
+      postcode: this.user.billing_info.postcode,
+      city: this.user.billing_info.city,
+      street: this.user.billing_info.street,
+      streetNr: this.user.billing_info.street_number,
+      floor: this.user.billing_info.floor,
+      door: this.user.billing_info.door,
     });
   }
 

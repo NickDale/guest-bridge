@@ -1,7 +1,6 @@
 from sqlalchemy.orm import declarative_base
-from sqlalchemy import Column, Integer, String, DateTime, Boolean
 import datetime
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 
 Base = declarative_base()
@@ -37,6 +36,11 @@ class Accommodation(Base):
     szallas_hu_external_ref = Column(String(255))
     vendegem_external_id = Column(String(255))
     vendegem_external_ref = Column(String(255))
+    address_id = Column(Integer, ForeignKey("addresses.id"), nullable=True)
+    contact_name = Column(String(100), nullable=True)
+    contact_phone = Column(String(100), nullable=True)
+    contact_email = Column(String(100), nullable=False)
+    reg_number = Column(String(100), nullable=False)
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
     created_by = Column(String(100), nullable=False)
     modified_by = Column(String(100), nullable=True)
@@ -44,6 +48,8 @@ class Accommodation(Base):
     deleted_date = Column(DateTime, nullable=True)
     deleted_by = Column(String(100), nullable=True)
 
+    address = relationship("Address", back_populates="accommodations")
+    room_mappings = relationship("RoomMapping", back_populates="accommodation")
 
 
 class Address(Base):
@@ -64,6 +70,7 @@ class Address(Base):
     modified_by = Column(String(100))
     modified_date = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
+    accommodations = relationship("Accommodation", back_populates="address")
 
 class RoomMapping(Base):
     __tablename__ = "room_mappings"
@@ -78,6 +85,7 @@ class RoomMapping(Base):
     modified_by = Column(String(100))
     modified_date = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
+    accommodation = relationship("Accommodation", back_populates="room_mappings")
 
 class SubscriptionType(Base):
     __tablename__ = "subscription_types"

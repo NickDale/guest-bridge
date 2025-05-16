@@ -12,6 +12,7 @@ class SyncProcess:
         self.vendegem_app = Vendegem(user='', password='')
 
     def start_sync(self, to_date, from_date=datetime.now()):
+        szallas_hu_app = SzallasHu(user='', password='')
         stored_reservations = self.vendegem_app.reservations(from_date, to_date)
 
         deleted_reservation_ids = self.szallas_hu_app.deleted_reservations(from_date, to_date)

@@ -43,14 +43,32 @@ class UserRead(BaseModel):
         orm_mode = True
 
 
+class AddressResponse(BaseModel):
+    id: int
+    name: Optional[str] = None
+    email: Optional[str] = None
+    tax: Optional[str] = None
+    country: Optional[str]
+    postcode: Optional[str]
+    city: Optional[str]
+    street: Optional[str]
+    street_number: Optional[str]
+    floor: Optional[str]
+    door: Optional[str]
+
+
 class UserDetail(BaseModel):
     id: int
     username: str
     email: str
     full_name: str
     type: str
+    status: str
     activation_date: Optional[datetime]
     blocked_date: Optional[datetime]
+    created_date: datetime
+    subscription_type: str
+    billing_info: AddressResponse
 
 
 class AccommodationResponse:
@@ -58,3 +76,22 @@ class AccommodationResponse:
     display_name: str
     status: str
     address: str
+
+
+class ExternalConnection(BaseModel):
+    id: Optional[str]
+    ref: Optional[str]
+
+
+class AccommodationDetail(BaseModel):
+    id: int
+    name: str
+    status: str
+    address: AddressResponse
+    szallas_hu: ExternalConnection
+    vendegem: ExternalConnection
+    contact_name: Optional[str]
+    contact_phone: Optional[str]
+    contact_email: Optional[str]
+    reg_number: Optional[str]
+    created_date: datetime

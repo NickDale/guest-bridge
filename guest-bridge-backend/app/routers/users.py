@@ -33,7 +33,6 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     return user_service.get_accommodations_by_user_id(user_id, db)
 
 
-@router.get("/{user_id}/accommodations/{accommodation_id}", response_model=None)
+@router.get("/{user_id}/accommodations/{accommodation_id}", response_model=schemas.AccommodationDetail)
 def get_accommodation_details(user_id: int, accommodation_id: int, db: Session = Depends(get_db)):
     return user_service.get_accommodation_detail(user_id, accommodation_id, db)
-

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, filter, Observable, of, switchMap } from 'rxjs';
 import { ConnectionStatus, ConnectionType, Property } from '../models/property-connection';
-import { Accomodation } from '../models/accommodation';
+import { Accomodation, AccomodationDetail } from '../models/accommodation';
 import { environment } from 'src/enviroments/environment';
 import { HttpClient } from '@angular/common/http';
 import { UserService } from './user.service';
@@ -11,7 +11,7 @@ import { UserService } from './user.service';
 })
 export class AccommodationService {
   private apiUrl = environment.apiUrl;
-  private selectedAccomodationSubject = new BehaviorSubject<Accomodation | null>(null);
+  private selectedAccomodationSubject = new BehaviorSubject<AccomodationDetail | null>(null);
   selectedAccomodation$ = this.selectedAccomodationSubject.asObservable();
 
   accomodations: Accomodation[] = []
@@ -57,23 +57,23 @@ export class AccommodationService {
 
   listAccommodations(): Observable<Accomodation[]> {
     return this.userService.selectedUser$.pipe(
-      filter(user => !!user), // ha kell szűrés, hogy ne legyen null/undefined
+      filter(user => !!user),
       switchMap(user =>
         this.http.get<Accomodation[]>(`${this.apiUrl}/users/${user!.id}/accommodations`)
       )
     );
   }
 
-  getById(accommodationId: number): Observable<Accomodation> {
+  getById(accommodationId: number): Observable<AccomodationDetail> {
     return this.userService.selectedUser$.pipe(
       filter(user => !!user),
       switchMap(user =>
-        this.http.get<Accomodation>(`${this.apiUrl}/users/${user!.id}/accommodations/${accommodationId}`)
+        this.http.get<AccomodationDetail>(`${this.apiUrl}/users/${user!.id}/accommodations/${accommodationId}`)
       )
     );
   }
 
-  setSelected(accomodation: Accomodation) {
+  setSelected(accomodation: AccomodationDetail) {
     this.selectedAccomodationSubject.next(accomodation);
   }
 

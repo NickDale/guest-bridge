@@ -1,12 +1,18 @@
+import { Address } from "./address";
+
 export interface User {
     id: number;
     full_name: string;
     username:string;
     email: string;
     status:string;
-    subscriptionType:string;
+    type: string;
+    subscription_type:string;
+    activation_date:Date,
+    blocked_date:Date,
+    created_date:Date,
     numberOfAccommodations:number;
 
-    //TODO: replace with address
-    billingAddress:string;
+
+    billing_info:Address;
 }

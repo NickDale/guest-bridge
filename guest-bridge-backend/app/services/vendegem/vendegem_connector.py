@@ -183,3 +183,20 @@ class Vendegem:
         print(resp)
 
         return resp
+
+    def rooms_by_id(self, external_id: str):
+        response = self.session.get(
+            url=base_url + my_rooms_url + "/" + external_id,
+            headers=default_headers
+        )
+        # print(response.json())
+        rooms = [
+            {
+                "name": item["kod"],
+                "id": item["kulsoId"],
+                "max_number_of_guest": item["ferohely"]
+            }
+            for item in response.json()
+        ]
+        # print(rooms)
+        return rooms

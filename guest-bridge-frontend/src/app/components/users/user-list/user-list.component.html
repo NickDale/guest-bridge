@@ -7,6 +7,7 @@
     <table class="table table-striped">
         <thead>
             <tr>
+                <th>Id</th>
                 <th>Név</th>
                 <th>Email</th>
                 <th>Státusz</th>
@@ -16,6 +17,7 @@
         </thead>
         <tbody>
             <tr *ngFor="let user of paginatedUsers" style="cursor: pointer;">
+                <td> {{ user.id}} </td>
                 <td>{{ user.full_name }}</td>
                 <td>{{ user.email }}</td>
                 <td>
@@ -32,7 +34,7 @@
                       }}
                     </span>
                 </td>
-                <td> {{ user.subscriptionType }}</td>
+                <td> {{ user.subscription_type }}</td>
                 <td> {{ user.numberOfAccommodations }} db</td>
                 <td class="text-end">
                     <button class="btn btn-outline-primary btn-sm me-2" (click)="goToUser(user.id)">
