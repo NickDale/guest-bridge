@@ -63,6 +63,10 @@ export class AuthService {
   isLoggedIn(): boolean {
     return !!sessionStorage.getItem('user');
   }
+  
+  getToken(){
+    return sessionStorage.getItem('token')
+  }
 
   logout(): void {
     sessionStorage.clear();
