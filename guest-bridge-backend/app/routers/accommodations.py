@@ -1,9 +1,15 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from app.core.database import get_db
-from app.services import connector_service
+from app.routers.schemas import RoomMappingSchema, SynHistorySchema
+from app.services import connector_service, accommodation_service
+from app.services.auth_service import get_current_user
 
-router = APIRouter(prefix="/connectors", tags=["connectors"])
+router = APIRouter(
+    prefix="/accommodations",
+    tags=["accommodations"],
+    dependencies=[Depends(get_current_user)],
+)
 
 
 @router.get("/vendegem/visible-accommodations", response_model=None)
@@ -14,3 +20,19 @@ def list_all_visible_vendegem_items(db: Session = Depends(get_db)):
 @router.get("/vendegem/{accommodation_id}/rooms", response_model=None)
 def list_all_visible_vendegem_items(accommodation_id: int, db: Session = Depends(get_db)):
     return connector_service.list_rooms_for_accommodation(accommodation_id, db)
+
+
+@router.get("/{accommodation_id}/{connection_type}/connection-check", response_model=bool)
+def accommodation_connection_check(accommodation_id: int, connection_type: str, db: Session = Depends(get_db)):
+    return connector_service.check_accommodation_connection(accommodation_id, connection_type, db)
+
+
+@router.get("/{accommodation_id}/mapping-configuration", response_model=list[RoomMappingSchema])
+def accommodation_mapping(accommodation_id: int, db: Session = Depends(get_db)):
+    return accommodation_service.find_mapping_config_by_accommodation_id(db, accommodation_id)
+
+
+#todo: validation --> user láthatja e ezt az accomodationt
+@router.get("/{accommodation_id}/sync-history", response_model=list[SynHistorySchema])
+def accommodation_sync_histories(accommodation_id: int, db: Session = Depends(get_db)):
+    return accommodation_service.accommodation_sync_histories(db, accommodation_id)

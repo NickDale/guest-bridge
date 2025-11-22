@@ -15,14 +15,17 @@ import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { RoomCardComponent } from './room-card/room-card.component';
+import { AuthInterceptor } from './services/auth.interceptor';
 @NgModule({
   declarations: [
     AppComponent,
     TopBarComponent,
     routingComponents,
     ChangePasswordDialogComponent,
-    AccomodationDetailComponent
+    AccomodationDetailComponent,
+    RoomCardComponent
   ],
   imports: [
     BrowserModule,
@@ -38,7 +41,13 @@ import { HttpClientModule } from '@angular/common/http';
     MatIconModule,
     MatToolbarModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

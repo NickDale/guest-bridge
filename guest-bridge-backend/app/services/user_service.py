@@ -155,7 +155,7 @@ def format_accommodation(row) -> dict:
 def get_accommodation_detail(user_id: int, accommodation_id: int, db: Session):
     result = (
         db.query(
-            Accommodation.id.label("id"),
+            Accommodation.id.label("accommodation_id"),
             Accommodation.display_name.label("name"),
             Accommodation.active.label("is_active"),
             Accommodation.created_date,
@@ -190,7 +190,7 @@ def get_accommodation_detail(user_id: int, accommodation_id: int, db: Session):
         raise HTTPException(status_code=404, detail="Accommodation not found")
 
     return AccommodationDetail(
-        id=result.id,
+        id=result.accommodation_id,
         name=result.name,
         status='active' if result.is_active else 'inactive',
         szallas_hu=ExternalConnection(

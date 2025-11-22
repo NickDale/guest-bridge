@@ -18,9 +18,11 @@ DATE_FORMAT = '%Y-%m-%d'
 
 
 class Accommodation:
-    def __init__(self, accommodation_id: None, szId=None):
+    def __init__(self, accommodation_id: None, name: str, owner: str, szId=None):
         self.id = accommodation_id
         self.szId = szId
+        self.name = name
+        self.owner = owner
         self.rooms = []
 
     def find_room_id_by_szallas_hu_name(self, room_name: str):

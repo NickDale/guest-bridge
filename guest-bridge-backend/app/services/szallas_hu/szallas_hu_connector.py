@@ -4,7 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 
-from app.services.szallas_hu.constatnt import DEFAULT_DAY_DELAY, base_url, reservation_detail_url, Keys, \
+from app.services.szallas_hu.constatnt import DEFAULT_DAY_DELAY, base_szallas_hu_url, reservation_detail_url, Keys, \
     ALREADY_ARRIVED, login_url
 
 
@@ -115,7 +115,7 @@ class SzallasHu:
             data[title.replace(":", "")] = description
 
     def reservation_detail(self, reservation_id):
-        resp = self.session.get(base_url + '/' + self.user_id + reservation_detail_url + str(reservation_id))
+        resp = self.session.get(base_szallas_hu_url + '/' + self.user_id + reservation_detail_url + str(reservation_id))
         soup = BeautifulSoup(resp.text, 'html.parser')
         customer_data_div = soup.find('div', class_='hotel-services')
 

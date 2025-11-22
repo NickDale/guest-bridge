@@ -1,3 +1,53 @@
-<p>config works! {{accommodationId}}</p>
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Szoba Összekapcsolások Áttekintése</h2>
+    <p class="text-muted text-center">A Szallas.hu szobákhoz rendelt Vendégem szobák aktuális állapota.</p>
 
+    <div class="row fw-bold text-muted border-bottom mb-2 pb-2 mx-0 d-none d-md-flex">
+        <div class="col-6">SZALLAS.HU SZOBÁK</div>
+        <div class="col-6">VENDEGEM SZOBÁK (Kapcsolt)</div>
+    </div>
 
+    <div *ngFor="let item of mappedViewData; let i = index" 
+         class="row align-items-center mb-3 p-2 rounded shadow-sm"
+         [ngClass]="{
+            'bg-light-subtle': i % 2 !== 0,
+            'border-start border-4 border-primary': item.vendegemRoom
+         }">
+
+        <div class="col-md-6 col-12 mb-2 mb-md-0">
+            <i class="bi bi-geo-alt-fill text-primary me-2"></i>
+            <span class="fw-bold">{{ item.szallasHuRoom.name }}</span>
+            <span class="text-muted small d-block">ID: {{ item.szallasHuRoom.id }}</span>
+        </div>
+
+        <div class="col-md-6 col-12">
+            
+            <ng-container *ngIf="item.vendegemRoom">
+                <i class="bi bi-link-45deg text-success me-2"></i>
+                <span class="fw-bold text-success">{{ item.vendegemRoom.name }}</span>
+                 <span class="text-muted small d-block">External ID: {{ item.vendegemRoom.externalId }}</span>
+                <i class="bi bi-check-circle-fill text-success ms-2" title="Sikeresen összekapcsolva"></i>
+            </ng-container>
+
+            <ng-container *ngIf="!item.vendegemRoom">
+                <div class="p-2 border border-danger-subtle rounded text-danger bg-danger-subtle">
+                    <i class="bi bi-exclamation-octagon-fill me-2"></i>
+                    <strong>Nincs összekapcsolva!</strong>
+                    <span class="small d-block">Ehhez a Szallas.hu szobához hiányzik a Vendégem szoba mappelés.</span>
+                </div>
+            </ng-container>
+            
+        </div>
+    </div>
+
+    <div *ngIf="getUnmappedVendegemRooms().length > 0" class="mt-5">
+        <h3 class="h5 text-muted">Nem Használt Vendégem Szobák</h3>
+        <p class="small text-muted">Ezek a Vendégem szobák nem kerültek hozzárendelésre egyetlen Szallas.hu szobához sem.</p>
+        <div class="d-flex flex-wrap gap-2">
+            <span *ngFor="let room of getUnmappedVendegemRooms()" class="badge bg-warning text-dark p-2">
+                {{ room.name }} ({{ room.id }})
+            </span>
+        </div>
+    </div>
+
+</div>

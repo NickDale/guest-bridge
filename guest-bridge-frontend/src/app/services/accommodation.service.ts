@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, filter, Observable, of, switchMap } from 'rxjs';
+import { BehaviorSubject, filter, Observable, of, switchMap, map } from 'rxjs';
 import { ConnectionStatus, ConnectionType, Property } from '../models/property-connection';
 import { Accomodation, AccomodationDetail } from '../models/accommodation';
 import { environment } from 'src/enviroments/environment';
@@ -40,7 +40,7 @@ export class AccommodationService {
         id: 1,
         type: ConnectionType.SZALLAS_HU,
         lastCheck: new Date(),
-        status: ConnectionStatus.SUCCESS
+        status: ConnectionStatus.FAILED
       },
       {
         id: 2,
@@ -78,6 +78,37 @@ export class AccommodationService {
   }
 
   findByIdAndType(id: number, connectionType: ConnectionType): Observable<Property | undefined> {
-    return of(this.properties.find(p => p.type === connectionType));
+    console.log("findByIdAndType id = " + id);
+    const localProperty = this.properties.find(p => p.type === connectionType);
+    return this.http.get<boolean>(`${this.apiUrl}/accommodations/${id}/${this.getEnumKey(connectionType)}/connection-check`)
+      .pipe(
+        map(
+          isConnected => {
+            const status = isConnected ? ConnectionStatus.SUCCESS : ConnectionStatus.FAILED;
+            if (localProperty) {
+              localProperty.status = status;
+              localProperty.lastCheck = new Date();
+              return localProperty;
+            }
+
+            const newProperty: Property = {
+              id: id,
+              type: ConnectionType.VENDEGEM,
+              status: status,
+              lastCheck: new Date(),
+            };
+            return newProperty;
+          }
+        )
+      );
+  }
+
+  getEnumKey(value: ConnectionType): string | undefined {
+    for (const key in ConnectionType) {
+      if (ConnectionType[key as keyof typeof ConnectionType] === value) {
+        return key;
+      }
+    }
+    return undefined;
   }
 }

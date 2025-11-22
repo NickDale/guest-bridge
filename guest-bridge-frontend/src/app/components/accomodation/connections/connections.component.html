@@ -7,7 +7,7 @@
 
         <div class="pe-3">
             <h5 class="card-title text-primary fw-semibold mb-2">
-                {{ property.type || 'Kapcsolat típusa' }}
+                {{ property.type || 'Kapcsolat típusa' }} adatkapcsolat
             </h5>
 
             <p class="mb-2">
@@ -18,6 +18,8 @@
             }">
                     {{ property.status || 'Ismeretlen' }}
                 </span>
+                <i *ngIf="property.status !== 'OK'" class="bi bi-info-circle-fill text-danger ms-2"
+                    data-bs-toggle="tooltip" data-bs-placement="top" title="Részletekért lásd alább!"></i>
             </p>
 
             <p class="mb-0 text-muted small">
@@ -26,11 +28,26 @@
             </p>
         </div>
 
-        <div>
+        <div *ngIf="szallasHuProperty">
             <button class="btn btn-outline-primary btn-sm" title="Kapcsolati adatok módosítása"
                 (click)="openModal(property)" data-bs-toggle="modal" data-bs-target="#accommodationModal">
                 <i class="bi bi-pencil"></i>
             </button>
+        </div>
+
+    </div>
+    <div class="p-4 pt-0">
+        <div *ngIf="szallasHuProperty" class="alert alert-danger small my-3" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            Sajnos jelenleg **nem lehet automatikus kapcsolatot létesíteni** a Szallas.hu felé. 
+            Jelenleg csak manuálisan lehet szinkronizációt indítani.
+        </div>
+
+        <div *ngIf="showVendegemFailedCheckMessage"
+            class="alert alert-danger small my-3" role="alert">
+            <i class="bi bi-x-circle-fill me-2"></i>
+            A Vendégem kapcsolat **sikertelen**. Kérlek, ellenőrizd, hogy a megadott profil **hozzá van-e rendelve
+            adatszolgáltatónak** a Vendégem rendszerében.
         </div>
 
     </div>

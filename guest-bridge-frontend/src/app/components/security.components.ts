@@ -38,10 +38,7 @@ export const userDetailsGuard: CanActivateFn = (route: ActivatedRouteSnapshot) =
 
   if (currentUser.id === userIdParam) {
     return true;
-  } else {
+  } 
     router.navigate([`/users/${currentUser.id}`]);
     return false;
-  }
-
-  return false;
 };

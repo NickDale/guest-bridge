@@ -50,6 +50,36 @@ class Accommodation(Base):
 
     address = relationship("Address", back_populates="accommodations")
     room_mappings = relationship("RoomMapping", back_populates="accommodation")
+    sync_histories = relationship("SyncHistory", back_populates="accommodation")
+
+
+class SyncHistory(Base):
+    __tablename__ = "sync_histories"
+    id = Column(Integer, primary_key=True, index=True)
+    accommodation_id = Column(Integer, ForeignKey("accommodations.id"), nullable=False)
+    debug_message = Column(String(255), nullable=True)
+    status = Column(String(255), nullable=True)
+    error_message = Column(String(255), nullable=True)
+    created_date = Column(DateTime, default=datetime.datetime.utcnow)
+    created_by = Column(String(100), nullable=False)
+
+    accommodation = relationship("Accommodation", back_populates="sync_histories")
+    details = relationship("SyncHistoryDetail", back_populates="history")
+
+
+class SyncHistoryDetail(Base):
+    __tablename__ = "sync_history_details"
+    id = Column(Integer, primary_key=True, index=True)
+    sync_id = Column(Integer, ForeignKey("sync_histories.id"), nullable=False)
+    reservation_id = Column(String(255))
+    debug_message = Column(String(255), nullable=True)
+    type = Column(String(150))
+    status = Column(String(255), nullable=True)
+    error_message = Column(String(255), nullable=True)
+    created_date = Column(DateTime, default=datetime.datetime.utcnow)
+    created_by = Column(String(100), nullable=False)
+
+    history = relationship("SyncHistory", back_populates="details")
 
 
 class Address(Base):
@@ -72,20 +102,22 @@ class Address(Base):
 
     accommodations = relationship("Accommodation", back_populates="address")
 
+
 class RoomMapping(Base):
     __tablename__ = "room_mappings"
     id = Column(Integer, primary_key=True, index=True)
     accommodation_id = Column(Integer, ForeignKey("accommodations.id"), nullable=False)
-    szallas_hu_ext_room_id = Column(String(255))
-    szallas_hu_ext_room_name = Column(String(50))
-    vendegem_ext_room_id = Column(String(255))
-    vendegem_ext_room_name = Column(String(50))
+    szallas_hu_ext_room_id = Column(String(255), nullable=True)
+    szallas_hu_ext_room_name = Column(String(50), nullable=True)
+    vendegem_ext_room_id = Column(String(255), nullable=True)
+    vendegem_ext_room_name = Column(String(50), nullable=True)
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
     created_by = Column(String(100), nullable=False)
     modified_by = Column(String(100))
     modified_date = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
     accommodation = relationship("Accommodation", back_populates="room_mappings")
+
 
 class SubscriptionType(Base):
     __tablename__ = "subscription_types"

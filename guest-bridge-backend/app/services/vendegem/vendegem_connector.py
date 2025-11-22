@@ -14,7 +14,7 @@ class Vendegem:
 
     def __init__(self, user: str, password: str):
         self.session = self.__setup_session(user, password)
-        self.accommodation = self.my_accommodation()
+        self.visible_accommodations = self.visible_accommodations()
 
     def __setup_session(self, user: str, password: str):
         with requests.Session() as s:
@@ -115,17 +115,16 @@ class Vendegem:
 
         return (float(reservation.full_price) / (end_date - start_date).days) / int(reservation.room_count)
 
-    def reservations(self, from_date=None, to_date=None):
+    def reservations(self, accommodation_id: str, from_date=None, to_date=None):
         response = self.session.post(
             url=base_url + reservations_url,
             json=self.__booking_list_payload(
-                property_id=self.accommodation.id,
+                property_id=accommodation_id,
                 from_date=from_date,
                 to_date=to_date
             )
         )
         reservations = response.json()['content']
-        print(reservations)
         return reservations
 
     def reservation_by_id(self, szallasHuId: int):
@@ -146,24 +145,25 @@ class Vendegem:
             print(f"{Fore.RED} Reservation = [reservation_id] deleted FAILED form Vendégem {Style.RESET_ALL}")
 
     # úgy kell módosítani, hogy a szállás.hu-hoz tarotozó vendégemet nézze csak -- erre kell egy db mapping
-    def my_accommodation(self):
+    def visible_accommodations(self):
         response = self.session.get(
             url=base_url + accommodation_url,
             headers=default_headers
         )
-        available_accommodations = response.json()
-        # TODO: itt minden olyan szálláshelyet látok, amihez hozzárendeltek
-        # itt kell majd
-        accommodation_json = response.json()[0]
-        accommodation = Accommodation(
-            accommodation_id=accommodation_json['kulsoId'],
-            szId=accommodation_json['szolgaltatoKulsoId']
-        )
+        visible_accommodations = [
+            Accommodation(
+                accommodation_id=ac['kulsoId'],
+                szId=ac['szolgaltatoKulsoId'],
+                name=ac['nev'],
+                owner=ac['szolgaltatoNev']
+            )
+            for ac in response.json()
+        ]
 
-        self.my_rooms(accommodation)
-        return accommodation
+        # self.my_rooms(accommodation)
+        return visible_accommodations
 
-    def my_rooms(self, accommodation: Accommodation):
+    def rooms_of_accommodation(self, accommodation: Accommodation):
         response = self.session.get(
             url=base_url + my_rooms_url + "/" + accommodation.id,
             headers=default_headers
@@ -174,15 +174,15 @@ class Vendegem:
         ]
         accommodation.rooms = rooms
 
-    def visible_accommodations(self):
-        response = self.session.get(
-            url=base_url + accommodation_url,
-            headers=default_headers
-        )
-        resp = response.json()
-        print(resp)
-
-        return resp
+    # def visible_accommodations(self):
+    #     response = self.session.get(
+    #         url=base_url + accommodation_url,
+    #         headers=default_headers
+    #     )
+    #     resp = response.json()
+    #     print(resp)
+    #
+    #     return resp
 
     def rooms_by_id(self, external_id: str):
         response = self.session.get(

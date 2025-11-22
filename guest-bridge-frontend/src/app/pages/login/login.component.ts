@@ -11,10 +11,20 @@ import { AuthService } from 'src/app/services/authentication.service';
 export class LoginComponent {
   username = '';
   password = '';
+  passwordFieldType: string = 'password';
 
   constructor(
     private authService: AuthService,
     private router: Router) { }
+
+  togglePasswordVisibility(): void {
+    console.log(this.passwordFieldType)
+    if (this.passwordFieldType === 'password') {
+      this.passwordFieldType = 'text';
+    } else {
+      this.passwordFieldType = 'password';
+    }
+  }
 
   onSubmit() {
     this.authService.login(this.username, this.password).subscribe(success => {

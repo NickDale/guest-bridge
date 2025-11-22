@@ -1,1 +1,70 @@
-<p>sync works!</p>
+<h2>Korábbi Szinkronizálások</h2>
+
+<table class="sync-table">
+    <thead>
+        <tr>
+            <th>Sync ID</th>
+            <th>Dátum</th>
+            <th>Eredmény</th>
+            <th>Tételek száma</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let record of syncHistory" [class.sync-error]="record.status === 'hiba'">
+            <td>{{ record.id }}</td>
+            <td>{{ record.created_date| date: 'yyyy.MM.dd. HH:mm:ss' }}</td>
+            <td>
+                <span class="badge" [ngClass]="{
+                        'text-bg-success': record.status === 'ok',
+                        'text-bg-danger': record.status === 'hiba'
+                        }">
+                    {{ record.status | uppercase }}
+                </span>
+            </td>
+            <td class="text-center">
+                <span *ngIf="record.details.length > 0; else noDetails" (click)="openDetailsModal(record)"
+                    class="badge text-bg-info text-decoration-none cursor-pointer" tabindex="0"
+                    title="Kattintson a részletek megtekintéséhez">
+
+                    <i class="bi bi-list-columns-reverse me-1"></i>
+                    {{ record.details.length }} tétel
+                </span>
+
+                <ng-template #noDetails>
+                    <span class="badge text-bg-secondary">
+                        0 tétel
+                    </span>
+                </ng-template>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<div *ngIf="selectedDetails" class="modal-backdrop">
+    <div class="modal-content">
+        <h3>Szinkronizáció Részletei ({{ selectedDetails[0]!.created_date | date: 'yyyy-MM-dd' }})</h3>
+        <button class="close-btn" (click)="selectedDetails = null">X</button>
+        <table class="details-table">
+            <thead>
+                <tr>
+                    <th>Szinkronizáció típusa (Foglalás/Lemondás) </th>
+                    <th>Szállas.hu foglalási azonosító</th>
+                    <th>Státusz</th>
+                    <th>Log</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let detail of selectedDetails" [class.detail-error]="detail.status === 'hiba'">
+                    <td>{{ detail.type }}</td>
+                    <td>{{ detail.reservation_id }}</td>
+                    <td>
+                        <span [class.success]="detail.status === 'sikeres'" [class.error]="detail.status === 'hiba'">
+                            {{ detail.status | titlecase }}
+                        </span>
+                    </td>
+                    <td>{{ detail.debug_message }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

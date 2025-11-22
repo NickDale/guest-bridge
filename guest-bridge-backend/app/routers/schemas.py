@@ -44,7 +44,7 @@ class UserRead(BaseModel):
 
 
 class AddressResponse(BaseModel):
-    id: int
+    id: Optional[int] = None
     name: Optional[str] = None
     email: Optional[str] = None
     tax: Optional[str] = None
@@ -95,3 +95,39 @@ class AccommodationDetail(BaseModel):
     contact_email: Optional[str]
     reg_number: Optional[str]
     created_date: datetime
+
+
+class RoomMappingSchema(BaseModel):
+    id: int
+    accommodation_id: int
+    szallas_hu_ext_room_id: Optional[str] = None
+    szallas_hu_ext_room_name: Optional[str] = None
+    vendegem_ext_room_id: Optional[str]
+    vendegem_ext_room_name: Optional[str]
+    created_date: datetime
+    created_by: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+
+class SynHistoryDetailSchema(BaseModel):
+    id: int
+    reservation_id: str
+    debug_message: Optional[str] = None
+    type: str
+    status: str
+    error_message: Optional[str] = None
+    created_date: datetime
+    created_by: Optional[str] = None
+
+
+class SynHistorySchema(BaseModel):
+    id: int
+    accommodation_id: int
+    debug_message: Optional[str] = None
+    status: str
+    error_message: Optional[str] = None
+    details: list[SynHistoryDetailSchema]
+    created_date: datetime
+    created_by: Optional[str] = None
