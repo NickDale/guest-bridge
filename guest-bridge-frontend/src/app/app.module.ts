@@ -16,8 +16,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { RoomCardComponent } from './room-card/room-card.component';
-import { AuthInterceptor } from './services/auth.interceptor';
+import { RoomCardComponent } from './components/accomodation/room-card/room-card.component';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { ErrorInterceptor } from './interceptors/error.interceptor';
+import { UserRegistrationFormComponent } from './components/users/user-registration-form/user-registration-form.component';
+import { AccomodationRegistrationFormComponent } from './components/accomodation/accomodation-registration-form/accomodation-registration-form.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -25,12 +28,14 @@ import { AuthInterceptor } from './services/auth.interceptor';
     routingComponents,
     ChangePasswordDialogComponent,
     AccomodationDetailComponent,
-    RoomCardComponent
+    RoomCardComponent,
+    UserRegistrationFormComponent,
+    AccomodationRegistrationFormComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    ReactiveFormsModule, 
+    ReactiveFormsModule,
     FormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
@@ -45,6 +50,11 @@ import { AuthInterceptor } from './services/auth.interceptor';
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorInterceptor,
       multi: true
     }
   ],

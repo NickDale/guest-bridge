@@ -1,8 +1,18 @@
 <div class="container mt-4">
     <h2>Felhasználók</h2>
+    <div class="d-flex align-items-center mb-3">
+        <input type="text" class="form-control me-3" placeholder="Keresés név alapján..." [(ngModel)]="searchText"
+            (input)="applyFilter()" />
 
-    <input type="text" class="form-control mb-3" placeholder="Keresés név alapján..." [(ngModel)]="searchText"
-        (input)="applyFilter()" />
+        <div class="d-flex align-items-center mb-3">
+            <div class="ms-auto">
+                <button class="btn btn-outline-primary btn-sm" title="Új felhasználó hozzáadása" (click)="openModal()"
+                    data-bs-toggle="modal" data-bs-target="#userRegistrationModal">
+                    <i class="bi bi-plus-lg"></i> Új felhasználó
+                </button>
+            </div>
+        </div>
+    </div>
 
     <table class="table table-striped">
         <thead>
@@ -26,24 +36,24 @@
                         'text-danger': user.status === 'blocked',
                         'text-warning': user.status === 'pending'
                       }">
-                      {{
+                        {{
                         user.status === 'active' ? '✔️' :
                         user.status === 'blocked' ? '❌' :
                         user.status === 'pending' ? '⏳' :
                         ''
-                      }}
+                        }}
                     </span>
                 </td>
                 <td> {{ user.subscription_type }}</td>
                 <td> {{ user.numberOfAccommodations }} db</td>
                 <td class="text-end">
                     <button class="btn btn-outline-primary btn-sm me-2" (click)="goToUser(user.id)">
-                      <i class="bi bi-eye"></i>
+                        <i class="bi bi-eye"></i>
                     </button>
                     <button class="btn btn-outline-danger btn-sm" (click)="deactivateUser(user.id)">
-                      <i class="bi bi-person-x"></i>
+                        <i class="bi bi-person-x"></i>
                     </button>
-                  </td>
+                </td>
             </tr>
         </tbody>
     </table>
@@ -78,4 +88,19 @@
             </li>
         </ul>
     </nav>
+</div>
+
+<div class="modal fade" id="userRegistrationModal" tabindex="-1" aria-labelledby="userRegistrationModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable"> 
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="userRegistrationModalLabel">Új felhasználó rögzítése</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Bezárás"></button>
+            </div>
+            <div class="modal-body">
+                <app-user-registration-form (userAdded)="refreshUserList()"></app-user-registration-form> 
+            </div>
+            </div>
+    </div>
 </div>

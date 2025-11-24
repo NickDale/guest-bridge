@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, filter, Observable, of, switchMap, map } from 'rxjs';
+import { BehaviorSubject, filter, Observable, of, switchMap, map, throwError, catchError } from 'rxjs';
 import { ConnectionStatus, ConnectionType, Property } from '../models/property-connection';
-import { Accomodation, AccomodationDetail } from '../models/accommodation';
+import { AccommodationCreationRequest, Accomodation, AccomodationDetail } from '../models/accommodation';
 import { environment } from 'src/enviroments/environment';
 import { HttpClient } from '@angular/common/http';
 import { UserService } from './user.service';
@@ -78,7 +78,6 @@ export class AccommodationService {
   }
 
   findByIdAndType(id: number, connectionType: ConnectionType): Observable<Property | undefined> {
-    console.log("findByIdAndType id = " + id);
     const localProperty = this.properties.find(p => p.type === connectionType);
     return this.http.get<boolean>(`${this.apiUrl}/accommodations/${id}/${this.getEnumKey(connectionType)}/connection-check`)
       .pipe(
@@ -111,4 +110,29 @@ export class AccommodationService {
     }
     return undefined;
   }
+
+  registerNewAccommodation(creationRequest: AccommodationCreationRequest) {
+        console.log("??????")
+    return this.userService.selectedUser$.pipe(
+      filter(user => !!user),
+      switchMap(user => {
+        console.log("dsdsdsadsddsadsad")
+        creationRequest.user_id = user!.id
+
+        return this.http.post<void>(`${this.apiUrl}/accommodations`, creationRequest).pipe(
+          map(response => {
+            console.log('User rögzites sikres', response);
+            return true;
+          }),
+          catchError(err => {
+            console.error('Hibás regisztráció a service-ben:', err);
+            return throwError(() => err);
+          })
+        )
+      }
+      )
+    );
+  }
+
 }
+

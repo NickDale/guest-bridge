@@ -68,7 +68,6 @@ def verify_user_access(user_id: int, current_user=Depends(get_current_user)):
     return current_user
 
 
-
 def login(username: str, password: str, db: Session):
     user = user_service.login(username, password, db)
     if not user:

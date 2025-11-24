@@ -1,0 +1,32 @@
+<form [formGroup]="accommodationForm" (ngSubmit)="onSubmit()">
+
+    <div class="mb-3">
+        <label for="name" class="form-label">Teljes név (*)</label>
+        <input type="text" id="name" formControlName="name" class="form-control"
+            [ngClass]="{ 'is-invalid': submitted && form['name'].errors }">
+        <div *ngIf="submitted && form['name'].errors" class="invalid-feedback">
+            <div *ngIf="form['name'].errors['required']">A név kötelező.</div>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label for="ntak" class="form-label">NTAK szám</label>
+        <input type="ntak" id="ntak" formControlName="ntak" class="form-control"
+            [ngClass]="{ 'is-invalid': submitted && form['ntak'].errors }">
+    </div>
+    <div class="mb-3">
+        <label for="vendegemId" class="form-label">Vendégem external ID</label>
+        <input type="vendegemId" id="vendegemId" formControlName="vendegemId" class="form-control">
+    </div>
+    <div class="mb-3">
+        <label for="vendegemRef" class="form-label">Vendégem external Ref</label>
+        <input type="vendegemRef" id="vendegemRef" formControlName="vendegemRef" class="form-control">
+    </div>
+    <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+        {{ errorMessage }}
+    </div>
+
+    <div class="text-end">
+        <button type="submit" class="btn btn-success">Szálláshely rögzítése</button>
+    </div>
+
+</form>

@@ -1,10 +1,14 @@
+from datetime import datetime
+
 from fastapi import HTTPException
 from sqlalchemy import func
 from sqlalchemy.orm import Session, joinedload
+from starlette import status
 
 from app.models.models import User, UserType, Accommodation, Address, UserAccommodation, SubscriptionType
 from app.routers import schemas
-from app.routers.schemas import UserDetail, AccommodationDetail, AddressResponse, ExternalConnection
+from app.routers.schemas import UserDetail, AccommodationDetail, AddressModel, ExternalConnection
+from app.services.auth_service import USER_NAME
 
 
 def login(username: str, password: str, db: Session):
@@ -15,7 +19,9 @@ def login(username: str, password: str, db: Session):
 
 
 def get_user_by_username(db: Session, username: str) -> User | None:
-    return db.query(User).options(joinedload(User.user_type)).filter(User.username == username).first()
+    return db.query(User).options(joinedload(User.user_type)) \
+        .filter((User.email == username) | (User.username == username)) \
+        .first()
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
@@ -24,16 +30,24 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     # return pwd_context.verify(plain_password, hashed_password)
 
 
-def create_user(user: schemas.UserCreate, db: Session):
-    # todo: finish
-    db_user = db.query(User).filter(User.email == user.email).first()
+def create_user(user_request: schemas.UserCreate, logged_user, db: Session):
+    db_user = db.query(User).filter(User.email == user_request.email).first()
+    user_type = db.query(UserType).filter(UserType.name == 'Felhasználó').first()
     if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    new_user = User(**user.dict())
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email already registered")
+    new_user = User()
+    # new_user.username = uuid.uuid4()
+    new_user.full_name = user_request.name
+    new_user.email = user_request.email
+
+    new_user.type_id = user_type.id
+    new_user.created_date = datetime.now()
+    new_user.activation_date = datetime.now()
+    new_user.created_by = logged_user[USER_NAME]
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-    return new_user
+    return format_user_response_data(new_user)
 
 
 def list_users_by_filter(expect: str, types: str, db: Session):
@@ -50,15 +64,19 @@ def list_users_by_filter(expect: str, types: str, db: Session):
 
     response = []
     for user in users:
-        response.append({
-            "id": user.id,
-            "username": user.username,
-            "full_name": user.full_name,
-            "email": user.email,
-            "status": 'blocked' if user.blocked_date else 'active' if user.activation_date else 'pending'
-        })
+        response.append(format_user_response_data(user))
 
     return response
+
+
+def format_user_response_data(user) -> dict:
+    return {
+        "id": user.id,
+        "username": user.username,
+        "full_name": user.full_name,
+        "email": user.email,
+        "status": 'blocked' if user.blocked_date else 'active' if user.activation_date else 'pending'
+    }
 
 
 def find_user_by_id(user_id: int, db: Session):
@@ -87,7 +105,7 @@ def find_user_by_id(user_id: int, db: Session):
         )
         .join(User.user_type)
         .outerjoin(Address, Address.id == User.billing_address_id)
-        .join(SubscriptionType, SubscriptionType.id == User.subscription_type_id)
+        .outerjoin(SubscriptionType, SubscriptionType.id == User.subscription_type_id)
         .filter(User.id == user_id)
         .first()
     )
@@ -106,7 +124,7 @@ def find_user_by_id(user_id: int, db: Session):
         blocked_date=user.blocked_date,
         created_date=user.created_date,
         subscription_type=user.subscription_type,
-        billing_info=AddressResponse(
+        billing_info=AddressModel(
             id=user.billing_id,
             name=user.billing_name,
             email=user.billing_email,
@@ -135,7 +153,7 @@ def get_accommodations_by_user_id(user_id: int, db: Session):
             Address.street_number
         )
         .join(UserAccommodation, UserAccommodation.accommodation_id == Accommodation.id)
-        .join(Accommodation.address)
+        .join(Accommodation.address, isouter=True)
         .filter(UserAccommodation.user_id == user_id)
         .all()
     )
@@ -178,7 +196,7 @@ def get_accommodation_detail(user_id: int, accommodation_id: int, db: Session):
         )
         .join(UserAccommodation, UserAccommodation.accommodation_id == Accommodation.id)
         .join(User, User.id == UserAccommodation.user_id)
-        .join(Accommodation.address)
+        .join(Accommodation.address, isouter=True)
         .filter(
             UserAccommodation.user_id == user_id,
             Accommodation.id == accommodation_id
@@ -206,7 +224,7 @@ def get_accommodation_detail(user_id: int, accommodation_id: int, db: Session):
         contact_phone=result.contact_phone,
         created_date=result.created_date,
         reg_number=result.reg_number,
-        address=AddressResponse(
+        address=AddressModel(
             id=result.id,
             country=result.country,
             postcode=result.postcode,

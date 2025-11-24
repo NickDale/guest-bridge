@@ -22,7 +22,8 @@ export class UserDetailsComponent {
       let userId = +params.get('id')!;
       this.userService.getUserById(userId).subscribe(user => {
         this.user = user
-
+        console.log("this.user")
+        console.log(this.user)
         if (!this.user) {
           //this.router.navigate(['/users']);
           this.router.navigate(['../', { id: userId }], { relativeTo: this.route })

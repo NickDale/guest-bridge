@@ -21,6 +21,7 @@ app.include_router(users.router)
 app.include_router(users.admin_router)
 app.include_router(authentication.router)
 app.include_router(accommodations.router)
+app.include_router(accommodations.admin_router)
 
 if __name__ == "__main__":
     import uvicorn

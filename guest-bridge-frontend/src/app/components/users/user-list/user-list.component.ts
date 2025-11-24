@@ -9,6 +9,7 @@ import { UserService } from 'src/app/services/user.service';
   styleUrls: ['./user-list.component.css']
 })
 export class UserListComponent {
+
   users: User[] = [];
   filteredUsers: User[] = [];
   pageSize = 5;
@@ -18,6 +19,14 @@ export class UserListComponent {
   constructor(private userService: UserService, private router: Router) { }
 
   ngOnInit(): void {
+    this.loadUsers();
+  }
+
+  refreshUserList() {
+    this.loadUsers();
+  }
+
+  loadUsers() {
     this.userService.listUsers().subscribe(users => {
       this.users = users;
       this.applyFilter();
@@ -28,7 +37,9 @@ export class UserListComponent {
     this.filteredUsers = this.users.filter(user =>
       user.full_name.toLowerCase().includes(this.searchText.toLowerCase())
       ||
-      user.username.toLowerCase().includes(this.searchText.toLowerCase())
+      (user.username &&
+        user.username.toLowerCase().includes(this.searchText.toLowerCase())
+      )
       ||
       user.email.toLowerCase().includes(this.searchText.toLowerCase())
     );
@@ -55,6 +66,10 @@ export class UserListComponent {
   get totalPages(): number[] {
     const count = Math.ceil(this.filteredUsers.length / this.pageSize);
     return Array(count).fill(0).map((_, i) => i + 1);
+  }
+
+  openModal() {
+
   }
 
 }

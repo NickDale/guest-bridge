@@ -16,7 +16,7 @@ class User(Base):
     type_id = Column(Integer, ForeignKey("user_types.id"), nullable=False)
     activation_date = Column(DateTime, nullable=True)
     blocked_date = Column(DateTime, nullable=True)
-    subscription_type_id = Column(Integer, ForeignKey("subscription_types.id"), nullable=False)
+    subscription_type_id = Column(Integer, ForeignKey("subscription_types.id"), nullable=True)
     encrypted_secret = Column(String(255), nullable=False)
     salt = Column(String(255), nullable=True)
     created_date = Column(DateTime, default=datetime.datetime.utcnow)

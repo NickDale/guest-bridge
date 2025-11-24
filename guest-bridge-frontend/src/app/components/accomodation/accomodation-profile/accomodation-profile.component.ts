@@ -77,6 +77,8 @@ export class AccomodationProfileComponent {
             this.accommodationService.setSelected(accommodation);
             this.updateForm(accommodation);
             this.loading = false;
+          }else{
+
           }
 
         },
