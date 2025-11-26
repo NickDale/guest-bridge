@@ -46,8 +46,21 @@ export class UserService {
     );
   }
 
+  changePassword(userId: number, oldPassword: string, newPassword: string): Observable<boolean> {
+    return this.http.patch<void>(`${this.apiUrl}/users/${userId}/change-password`, { old_password: oldPassword, new_password: newPassword }).pipe(
+      map(response => {
+        console.log('User rögzites sikres', response);
+        return true;
+      }),
+      catchError(err => {
+        console.error('Hibás regisztráció a service-ben:', err);
+        return throwError(() => err);
+      })
+    );
+  }
+
   registerUser(name: string, email: string): Observable<boolean> {
-    return this.http.post<void>(`${this.apiUrl}/users`, { name: name, email: email }).pipe(
+    return this.http.patch<void>(`${this.apiUrl}/users`, { name: name, email: email }).pipe(
       map(response => {
         console.log('User rögzites sikres', response);
         return true;

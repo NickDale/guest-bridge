@@ -161,3 +161,8 @@ class UserUpdateRequest(BaseModel):
     full_name: str
     email: str
     billing_info: Optional[BillingAddressUpdate] = None
+
+
+class UserPasswordUpdateRequest(BaseModel):
+    old_password: str
+    new_password: str

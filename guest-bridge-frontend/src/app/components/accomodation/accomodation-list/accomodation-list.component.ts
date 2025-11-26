@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Accomodation } from 'src/app/models/accommodation';
-import { User } from 'src/app/models/user';
 import { AccommodationService } from 'src/app/services/accommodation.service';
 import { UserService } from 'src/app/services/user.service';
 

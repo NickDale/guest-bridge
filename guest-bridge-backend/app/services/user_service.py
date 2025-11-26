@@ -1,3 +1,5 @@
+import random
+import string
 from datetime import datetime
 
 from fastapi import HTTPException
@@ -7,7 +9,8 @@ from starlette import status
 
 from app.models.models import User, UserType, Accommodation, Address, UserAccommodation, SubscriptionType
 from app.routers import schemas
-from app.routers.schemas import UserDetail, AccommodationDetail, AddressModel, ExternalConnection, UserUpdateRequest
+from app.routers.schemas import UserDetail, AccommodationDetail, AddressModel, ExternalConnection, UserUpdateRequest, \
+    UserPasswordUpdateRequest
 from app.services import accommodation_service
 from app.services.auth_service import USER_NAME
 
@@ -27,7 +30,7 @@ def get_user_by_username(db: Session, username: str) -> User | None:
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return plain_password == hashed_password
-    # TODO: change it
+    # TODO: éles környezetben módosítani -> jelszavakat titkosítottan 1 irányba kódolhatóan tárolni
     # return pwd_context.verify(plain_password, hashed_password)
 
 
@@ -319,3 +322,48 @@ def update_user_and_billing_info(user_id: int, update_request: UserUpdateRequest
 
     db.add(user)
     db.commit()
+
+
+def change_user_pass(user_id: int, update_pass_request: UserPasswordUpdateRequest, logged_user, db: Session):
+    if update_pass_request.old_password == update_pass_request.new_password:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail=f"The old and the new password can not be the same")
+
+    user = find_user_by_id(user_id, db)
+    if not verify_password(update_pass_request.old_password, user.encrypted_secret):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Invalid credentials")
+
+    user.encrypted_secret = update_pass_request.new_password
+    user.modified_by = logged_user[USER_NAME]
+    user.modified_date = datetime.now()
+    db.add(user)
+    db.commit()
+
+
+def admin_password_reset(user_id: int, logged_user, db: Session):
+    user = find_user_by_id(user_id, db)
+
+    user.encrypted_secret = generate_simple_password()
+    user.modified_by = logged_user[USER_NAME]
+    user.modified_date = datetime.now()
+    db.add(user)
+    # TODO: email küldés a felhasználónak a megadott email címére a kigenerált ideiglenes jelszóval
+    db.commit()
+
+
+def generate_simple_password():
+    letters = string.ascii_letters
+    digits = string.digits
+    all_chars = letters + digits + string.punctuation
+
+    length = random.randint(6, 12)
+    password = [
+        random.choice(letters),
+        random.choice(digits)
+    ]
+
+    remaining_length = length - len(password)
+    password.extend(random.choice(all_chars) for _ in range(remaining_length))
+
+    random.shuffle(password)
+    return "".join(password)

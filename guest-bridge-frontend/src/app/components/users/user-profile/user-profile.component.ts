@@ -44,9 +44,9 @@ export class UserProfileComponent {
     });
   }
 
-  openChangePasswordDialog(): void {
+  //openChangePasswordDialog(): void {
     //this.dialog.open(ChangePasswordDialogComponent);
-  }
+  //}
 
 
   toggleEdit() {

@@ -65,3 +65,17 @@ def read_user(user_id: int, db: Session = Depends(get_db), verified_user=Depends
 def get_accommodation_details(user_id: int, accommodation_id: int, logged_user=Depends(verify_user_access),
                               db: Session = Depends(get_db)):
     return user_service.get_accommodation_detail(user_id, accommodation_id, db)
+
+
+@router.patch("/{user_id}/change-password", response_model=None)
+def get_accommodation_details(user_id: int, update_pass_request: schemas.UserPasswordUpdateRequest,
+                              logged_user=Depends(verify_user_access),
+                              db: Session = Depends(get_db)):
+    return user_service.change_user_pass(user_id, update_pass_request, logged_user, db)
+
+
+@admin_router.patch("/{user_id}/reset-password", response_model=None)
+def get_accommodation_details(user_id: int,
+                              logged_user=Depends(verify_user_access),
+                              db: Session = Depends(get_db)):
+    return user_service.admin_password_reset(user_id, logged_user, db)

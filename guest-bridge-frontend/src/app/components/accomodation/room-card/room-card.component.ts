@@ -14,7 +14,7 @@ export class RoomCardComponent {
   @Input() isMapped: boolean = false;
   @Input() mappedFrom: Room | undefined;
 
-  @Output() mapAction = new EventEmitter<Room>();
+ // @Output() mapAction = new EventEmitter<Room>();
 
   get cardClass(): string {
     return this.source === 'szallas.hu' ? 'card-szallas' : 'card-vendegem';
@@ -22,7 +22,7 @@ export class RoomCardComponent {
 
   performMapAction(): void {
     if (!this.isMapped) {
-      this.mapAction.emit(this.room);
+     // this.mapAction.emit(this.room);
     }
   }
 }
