@@ -1,13 +1,10 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { AppRoutingModule, routingComponents } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { TopBarComponent } from './components/top-bar/top-bar.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { AccomodationDetailComponent } from './components/accomodation/accomodation-detail/accomodation-detail.component';
-
-import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -15,7 +12,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { RoomCardComponent } from './components/accomodation/room-card/room-card.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { ErrorInterceptor } from './interceptors/error.interceptor';
 import { UserRegistrationFormComponent } from './components/users/user-registration-form/user-registration-form.component';
@@ -27,7 +23,6 @@ import { PasswordChangeComponent } from './components/users/password-change/pass
     TopBarComponent,
     routingComponents,
     AccomodationDetailComponent,
-    RoomCardComponent,
     UserRegistrationFormComponent,
     AccomodationRegistrationFormComponent,
     PasswordChangeComponent
@@ -39,7 +34,6 @@ import { PasswordChangeComponent } from './components/users/password-change/pass
     FormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    MatDialogModule,
     MatProgressSpinnerModule,
     MatFormFieldModule,
     MatInputModule,
