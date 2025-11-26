@@ -1,23 +1,22 @@
 import { Component } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { User } from 'src/app/models/user';
 import { UserService } from 'src/app/services/user.service';
-import { ChangePasswordDialogComponent } from '../../change-password-dialog/change-password-dialog.component';
 import { FormBuilder, Validators } from '@angular/forms';
 
+declare var bootstrap: any;
 @Component({
   selector: 'app-user-profile',
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.css']
 })
 export class UserProfileComponent {
+
   user!: User;
   isEditing = false;
   loading = false;
 
   constructor(
     private fb: FormBuilder,
-    private dialog: MatDialog,
     private userService: UserService) { }
 
   userForm = this.fb.group({
@@ -46,17 +45,22 @@ export class UserProfileComponent {
   }
 
   openChangePasswordDialog(): void {
-    this.dialog.open(ChangePasswordDialogComponent);
+    //this.dialog.open(ChangePasswordDialogComponent);
   }
+
 
   toggleEdit() {
     this.isEditing = !this.isEditing;
     if (this.isEditing) {
       this.userForm.enable();
     } else {
-      this.userForm.disable();
-      this.pattchForm();
+      this.disable();
     }
+  }
+
+  private disable() {
+    this.userForm.disable();
+    this.pattchForm();
   }
 
   private pattchForm() {
@@ -77,10 +81,58 @@ export class UserProfileComponent {
   }
 
   onSubmit() {
-    if (this.userForm.valid) {
-      console.log('Form submitted', this.userForm.value);
-    } else {
-      console.log('Form is invalid');
+    if (!this.userForm.valid) {
+      alert('Form is invalid');
     }
+
+    const {
+      full_name, email, billingName, billingEmail,
+      tax, postcode, city, street, streetNr, floor, door
+    } = this.userForm.value;
+
+    this.userService.updateUser(this.user.id, {
+      full_name: full_name!,
+      email: email!,
+      billing_info: {
+        id: this.user.billing_info.id,
+        name: billingName!,
+        email: billingEmail,
+        country: 'Magyarország',
+        postcode: postcode,
+        tax: tax,
+        city: city,
+        street: street,
+        street_number: streetNr,
+        floor: floor,
+        door: door
+      }
+
+    }).subscribe({
+      next: success => {
+        if (success) {
+          this.userService.getUserById(this.user.id).subscribe(user => {
+            this.user = user
+            this.userService.setSelectedUser(this.user);
+          })
+          this.toggleEdit()
+        }
+
+      },
+      error: error => {
+        console.error('Hiba a regisztráció során:', error);
+      }
+    });
+  }
+
+  closeModal(modalId: string): void {
+    const modalElement = document.getElementById(modalId);
+    if (modalElement) {
+      const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+      modalInstance.hide();
+    }
+  }
+
+  close() {
+    alert("Sikeres jelszóváltoztatás!");
   }
 }

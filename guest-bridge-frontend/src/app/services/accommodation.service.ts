@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, filter, Observable, of, switchMap, map, throwError, catchError } from 'rxjs';
+import { BehaviorSubject, filter, Observable, switchMap, map, throwError, catchError } from 'rxjs';
 import { ConnectionStatus, ConnectionType, Property } from '../models/property-connection';
 import { AccommodationCreationRequest, Accomodation, AccomodationDetail } from '../models/accommodation';
 import { environment } from 'src/enviroments/environment';
@@ -14,8 +14,6 @@ export class AccommodationService {
   private selectedAccomodationSubject = new BehaviorSubject<AccomodationDetail | null>(null);
   selectedAccomodation$ = this.selectedAccomodationSubject.asObservable();
 
-  accomodations: Accomodation[] = []
-
   properties: Property[] = []
 
   constructor(
@@ -25,16 +23,7 @@ export class AccommodationService {
     this.init();
   }
 
-
   init(): void {
-    this.accomodations = Array.from({ length: 10 }, (_, i) => ({
-      id: i + 1,
-      name: `ACC ${i + 1}`,
-      address: `accc   ${i + 1} valami address`,
-      active: Math.random() < 0.5,
-      numberOfPlaces: Math.floor(Math.random() * 16) + 1
-    }));
-
     this.properties = [
       {
         id: 1,
@@ -49,10 +38,6 @@ export class AccommodationService {
         status: ConnectionStatus.FAILED
       }
     ]
-  }
-
-  mockedData() {
-    return this.accomodations;
   }
 
   listAccommodations(): Observable<Accomodation[]> {
@@ -112,22 +97,15 @@ export class AccommodationService {
   }
 
   registerNewAccommodation(creationRequest: AccommodationCreationRequest) {
-        console.log("??????")
     return this.userService.selectedUser$.pipe(
       filter(user => !!user),
       switchMap(user => {
-        console.log("dsdsdsadsddsadsad")
         creationRequest.user_id = user!.id
-
         return this.http.post<void>(`${this.apiUrl}/accommodations`, creationRequest).pipe(
           map(response => {
-            console.log('User rögzites sikres', response);
             return true;
           }),
-          catchError(err => {
-            console.error('Hibás regisztráció a service-ben:', err);
-            return throwError(() => err);
-          })
+          catchError(err => throwError(() => err))
         )
       }
       )

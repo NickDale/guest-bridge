@@ -1,5 +1,5 @@
-import { Injectable, OnInit } from '@angular/core';
-import { User } from '../models/user';
+import { Injectable } from '@angular/core';
+import { UpdateUserRequest, User } from '../models/user';
 import { BehaviorSubject, catchError, map, Observable, of, throwError } from 'rxjs';
 import { environment } from 'src/enviroments/environment';
 import { HttpClient } from '@angular/common/http';
@@ -33,6 +33,19 @@ export class UserService {
     this.selectedUserSubject.next(user);
   }
 
+  updateUser(user_id: number, updateRequest: UpdateUserRequest): Observable<boolean> {
+    return this.http.patch<void>(`${this.apiUrl}/users/${user_id}`, updateRequest).pipe(
+      map(response => {
+        console.log(`Sikeres user [${user_id}] update  rögzites sikres`);
+        return true;
+      }),
+      catchError(err => {
+        console.log(`Error a user [${user_id}] update  során`);
+        return throwError(() => err);
+      })
+    );
+  }
+
   registerUser(name: string, email: string): Observable<boolean> {
     return this.http.post<void>(`${this.apiUrl}/users`, { name: name, email: email }).pipe(
       map(response => {
@@ -41,6 +54,32 @@ export class UserService {
       }),
       catchError(err => {
         console.error('Hibás regisztráció a service-ben:', err);
+        return throwError(() => err);
+      })
+    );
+  }
+
+  deactivate(userId: number): Observable<boolean> {
+    return this.http.delete<void>(`${this.apiUrl}/users/${userId}/inactivate`).pipe(
+      map(response => {
+        console.log('Sikeres inaktiválás', response);
+        return true;
+      }),
+      catchError(err => {
+        console.error('Hiba az inaktiválásban:', err);
+        return throwError(() => err);
+      })
+    );
+  }
+
+  activate(userId: number): Observable<boolean> {
+    return this.http.patch<void>(`${this.apiUrl}/users/${userId}/activate`, {}).pipe(
+      map(response => {
+        console.log('Sikeres aktiválás', response);
+        return true;
+      }),
+      catchError(err => {
+        console.error('Hiba az aktiválásban:', err);
         return throwError(() => err);
       })
     );

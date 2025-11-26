@@ -14,7 +14,7 @@ export class AccomodationListComponent {
 
   accommodations: Accomodation[] = [];
   filteredAccommodations: Accomodation[] = [];
-  pageSize = 3;
+  pageSize = 5;
   currentPage = 1;
   searchText = "";
   selectedAccommodationId?: number;
@@ -79,7 +79,6 @@ export class AccomodationListComponent {
   }
 
   openAccommodationModal() {
-
   }
 
 }

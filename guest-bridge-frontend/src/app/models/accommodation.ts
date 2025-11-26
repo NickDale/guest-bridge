@@ -1,4 +1,4 @@
-import { Address } from "./address";
+import { Address, AddressCreationRequest } from "./address";
 
 export interface Accomodation {
     id: number;
@@ -32,9 +32,10 @@ export interface AccommodationCreationRequest {
     user_id: number
     ntak_no: string
     vendegem_id?: string
+    szallas_hu_id?: string
     vendegem_ref?: string
     contact_name?: string
     contact_phone?: string
     contact_email?: string
-    address?: Address
+    address: AddressCreationRequest
 }

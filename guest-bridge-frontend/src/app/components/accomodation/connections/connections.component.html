@@ -39,12 +39,11 @@
     <div class="p-4 pt-0">
         <div *ngIf="szallasHuProperty" class="alert alert-danger small my-3" role="alert">
             <i class="bi bi-exclamation-triangle-fill me-2"></i>
-            Sajnos jelenleg **nem lehet automatikus kapcsolatot létesíteni** a Szallas.hu felé. 
+            Sajnos jelenleg **nem lehet automatikus kapcsolatot létesíteni** a Szallas.hu felé.
             Jelenleg csak manuálisan lehet szinkronizációt indítani.
         </div>
 
-        <div *ngIf="showVendegemFailedCheckMessage"
-            class="alert alert-danger small my-3" role="alert">
+        <div *ngIf="showVendegemFailedCheckMessage" class="alert alert-danger small my-3" role="alert">
             <i class="bi bi-x-circle-fill me-2"></i>
             A Vendégem kapcsolat **sikertelen**. Kérlek, ellenőrizd, hogy a megadott profil **hozzá van-e rendelve
             adatszolgáltatónak** a Vendégem rendszerében.
@@ -62,7 +61,6 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Bezárás"></button>
             </div>
             <div class="modal-body">
-                <!--   TODO:   change to username password component -->
                 <app-accomodation-detail *ngIf="1" [accommodationId]="1"></app-accomodation-detail>
             </div>
         </div>

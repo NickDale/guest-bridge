@@ -1,10 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, filter, switchMap, map } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { environment } from 'src/enviroments/environment';
-import { AccomodationDetail, Accomodation } from '../models/accommodation';
 import { Property, ConnectionType, ConnectionStatus } from '../models/property-connection';
-import { UserService } from './user.service';
 import { MapRecord, Room, RoomMapping } from '../models/room';
 
 @Injectable({
@@ -13,20 +11,13 @@ import { MapRecord, Room, RoomMapping } from '../models/room';
 export class ConfigService {
 
   private apiUrl = environment.apiUrl;
-  //private selectedAccomodationSubject = new BehaviorSubject<AccomodationDetail | null>(null);
-  //selectedAccomodation$ = this.selectedAccomodationSubject.asObservable();
-
-
-
   properties: Property[] = []
 
   constructor(private http: HttpClient) {
     this.init();
   }
 
-
   init(): void {
-
     this.properties = [
       {
         id: 1,

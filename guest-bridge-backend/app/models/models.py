@@ -1,6 +1,7 @@
-from sqlalchemy.orm import declarative_base
 import datetime
+
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Boolean
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import relationship
 
 Base = declarative_base()
@@ -25,6 +26,7 @@ class User(Base):
     modified_date = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
     user_type = relationship("UserType", back_populates="users")
+    billing_address = relationship("Address", back_populates="users")
 
 
 class Accommodation(Base):
@@ -101,6 +103,7 @@ class Address(Base):
     modified_date = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
     accommodations = relationship("Accommodation", back_populates="address")
+    users = relationship("User", back_populates="billing_address")
 
 
 class RoomMapping(Base):

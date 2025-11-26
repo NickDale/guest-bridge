@@ -16,7 +16,10 @@ export class UserListComponent {
   currentPage = 1;
   searchText = "";
 
-  constructor(private userService: UserService, private router: Router) { }
+  constructor(
+    private userService: UserService,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
     this.loadUsers();
@@ -60,7 +63,38 @@ export class UserListComponent {
   }
 
   deactivateUser(userId: number): void {
-    //TODO: deaktiválni a usert
+    this.userService.deactivate(userId).subscribe({
+      next: () => {
+        console.log(`A felhasználó (${userId}) sikeresen deaktiválva.`);
+        this.loadUsers();
+      },
+      error: (err: any) => {
+        console.error('Hiba a felhasználó deaktiválásakor:', err);
+        alert('Hiba történt a felhasználó deaktiválása közben. Próbáld újra!');
+      }
+    });
+  }
+
+  activateUser(userId: number): void {
+    this.userService.activate(userId).subscribe({
+      next: () => {
+        console.log(`A felhasználó (${userId}) sikeresen aktiválva.`);
+        this.loadUsers();
+      },
+      error: (err: any) => {
+        console.error('Hiba a felhasználó aktiválásakor:', err);
+        alert('Hiba történt a felhasználó aktiválása közben. Próbáld újra!');
+      }
+    });
+  }
+
+
+  toggleUserStatus(userId: number, action: string): void {
+    if (action === 'activate') {
+      this.activateUser(userId)
+    } else if (action === 'block') {
+      this.deactivateUser(userId)
+    }
   }
 
   get totalPages(): number[] {

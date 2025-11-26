@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from fastapi import HTTPException
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -52,10 +53,16 @@ def accommodation_sync_histories(db: Session, accommodation_id: int):
     return results
 
 
+def number_of_accommodation_by_user_id(db: Session, user_id: int) -> int:
+    return db.query(func.count(UserAccommodation.id)).filter(UserAccommodation.user_id == user_id).scalar()
+
+
 def create_new_accommodation(request: AccommodationCreationRequest, logged_user, db: Session):
     accommodation = db.query(Accommodation) \
         .filter(
-        (Accommodation.reg_number == request.ntak_no) | (Accommodation.display_name == request.name)
+        (Accommodation.reg_number == request.ntak_no)
+        | (Accommodation.display_name == request.name)
+        | (Accommodation.szallas_hu_external_id == request.szallas_hu_id)
     ).first()
     if accommodation:
         raise HTTPException(
@@ -66,6 +73,7 @@ def create_new_accommodation(request: AccommodationCreationRequest, logged_user,
     new_accommodation = Accommodation()
     new_accommodation.display_name = request.name
     new_accommodation.active = True
+    new_accommodation.szallas_hu_external_id = request.szallas_hu_id
     new_accommodation.vendegem_external_id = request.vendegem_id
     new_accommodation.vendegem_external_ref = request.vendegem_ref
     new_accommodation.contact_name = request.contact_name

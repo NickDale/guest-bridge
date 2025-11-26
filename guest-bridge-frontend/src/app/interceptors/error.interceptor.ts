@@ -6,19 +6,19 @@ import { Router } from '@angular/router';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
-  
-  constructor(private router: Router) {} 
+
+  constructor(private router: Router) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
-        
+
         if (error.status === 401) {
-          console.error('Jogosultság lejárt vagy elutasítva. Átirányítás a bejelentkezésre...');               
-          this.router.navigate(['/login']); 
+          console.error('Jogosultság lejárt vagy elutasítva. Átirányítás a bejelentkezésre...');
+          this.router.navigate(['/login']);
         }
-        
-        return throwError(() => error); 
+
+        return throwError(() => error);
       })
     );
   }

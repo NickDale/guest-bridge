@@ -2,34 +2,25 @@ import asyncio
 import threading
 import time
 import uuid
-from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
 from playwright.async_api import async_playwright
 from sqlalchemy.orm import Session
-from starlette import status
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError, Page
 
 from app.core.database import get_db
 from app.routers import schemas
 from app.services import auth_service
-from app.services.auth_service import get_current_user
 from app.services.szallas_hu.constatnt import base_szallas_hu_url
 
-router = APIRouter(prefix="/authentications", tags=["auth"])
+router = APIRouter(prefix="/authentications", tags=["Authentication"])
 
 
-@router.get("/test-public")
-def login():
-    return {"ok"}
-
-
-@router.get("/protected-data")
-def read_protected_data(user: Annotated[int, Depends(get_current_user)]):
-    return {
-        "message": "Szupertitkos adatok.",
-        "user": user
-    }
+@router.post("/token")
+async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    auth_resp = auth_service.login(username=form_data.username, password=form_data.password, db=db)
+    return {"access_token": auth_resp['access_token'], "token_type": auth_resp['token_type']}
 
 
 @router.post("/login")

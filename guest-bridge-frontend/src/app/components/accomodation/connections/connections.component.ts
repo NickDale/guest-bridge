@@ -35,21 +35,7 @@ export class ConnectionsComponent {
     }, 500);
   }
 
-  toggleEdit() {
-    this.isEditing = !this.isEditing;
-    /*if (this.isEditing) {
-      this.accomodationForm.enable();
-    } else {
-      this.accomodationForm.disable();
-    }*/
-  }
-
-  save() {
-
-  }
-
-  openModal(property:Property) {
-
+  openModal(property: Property) {
   }
 
   get szallasHuProperty(): boolean {
@@ -58,7 +44,7 @@ export class ConnectionsComponent {
     }
     return this.property.type === ConnectionType.SZALLAS_HU;
   }
-  
+
 
   get showVendegemFailedCheckMessage(): boolean {
     if (!this.property) {
@@ -66,7 +52,7 @@ export class ConnectionsComponent {
     }
 
     return (
-      this.property.type === ConnectionType.VENDEGEM && 
+      this.property.type === ConnectionType.VENDEGEM &&
       this.property.status === ConnectionStatus.FAILED
     );
   }

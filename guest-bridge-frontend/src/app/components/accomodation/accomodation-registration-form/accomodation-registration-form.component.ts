@@ -1,9 +1,6 @@
-import { Component, ElementRef, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
-import { ActivatedRoute, ParamMap } from '@angular/router';
-import { User } from 'src/app/models/user';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormGroup, FormBuilder, Validators, } from '@angular/forms';
 import { AccommodationService } from 'src/app/services/accommodation.service';
-import { UserService } from 'src/app/services/user.service';
 
 declare var bootstrap: any;
 @Component({
@@ -14,16 +11,14 @@ declare var bootstrap: any;
 export class AccomodationRegistrationFormComponent implements OnInit {
 
   @Output() accommodationAdded = new EventEmitter<void>();
+  @Input() selectedUserId!: number;
 
- currentUserId!: number; 
   accommodationForm!: FormGroup;
   submitted = false;
   errorMessage: string | null = null;
-  user!: User;
 
   constructor(
     private fb: FormBuilder,
-    private route: ActivatedRoute,
     private accommodationService: AccommodationService,
     private elementRef: ElementRef
   ) { }
@@ -32,12 +27,13 @@ export class AccomodationRegistrationFormComponent implements OnInit {
     this.accommodationForm = this.fb.group({
       name: ['', Validators.required],
       ntak: ['', Validators.required],
-      vendegemId:[''],
-      vendegemRef:[''],
-    });
-    this.route.paramMap.subscribe((params: ParamMap) => {
-      console.log(params)
-    
+      postcode: [''],
+      city: ['', Validators.required],
+      street: ['', Validators.required],
+      streetNo: ['', Validators.required],
+      szallasHuId: ['', Validators.required],
+      vendegemId: [''],
+      vendegemRef: [''],
     });
   }
 
@@ -48,20 +44,31 @@ export class AccomodationRegistrationFormComponent implements OnInit {
     if (this.accommodationForm.invalid) {
       return;
     }
+    if (!this.selectedUserId) {
+      this.errorMessage = "Hiba: A felhasználó ID hiányzik.";
+      return;
+    }
 
-    const { name, vendegemId, vendegemRef, ntak } = this.accommodationForm.value;
-    const creationRequest = {
+    const { name, vendegemId, vendegemRef, ntak, szallasHuId,postcode,city,street,streetNo } = this.accommodationForm.value;
+    this.accommodationService.registerNewAccommodation({
       name: name,
-      user_id:2,
-      vendegemId: vendegemId,
+      user_id: this.selectedUserId,
+      vendegem_id: vendegemId,
+      szallas_hu_id: szallasHuId,
       ntak_no: ntak,
-      vendegemRef: vendegemRef
-    };
-    console.log("REG")
-      console.log(this.user)
-    this.accommodationService.registerNewAccommodation(creationRequest).subscribe({
+      vendegem_ref: vendegemRef,
+      address: {
+        postcode: postcode,
+        country: 'Magyarország',
+        city: city,
+        street: street,
+        street_number: streetNo,
+        floor: null,
+        door: null
+      }
+
+    }).subscribe({
       next: success => {
-        console.log("success")
         if (success) {
           this.resetForm();
           this.accommodationAdded.emit();

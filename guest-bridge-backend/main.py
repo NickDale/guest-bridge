@@ -1,9 +1,18 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
-from app.routers import users, authentication, accommodations
+from app.routers import users, authentication, accommodations, test_router
 
-app = FastAPI(root_path='/api')
+app = FastAPI(
+    root_path='/api',
+    title="Guest Bridge - API dokumentáció",
+    version="1.0.0",
+    description="Szállás.hu és Vendégem rendszerek közti adatszikronizációt megvalósító szoftver API leírása",
+    contact={
+        "name": "Balogh Norbert - I2I25Q",
+        "email": "balogh.norbert92@gmail.com",
+    }
+)
 
 origins = [
     "http://localhost:4200",
@@ -22,6 +31,7 @@ app.include_router(users.admin_router)
 app.include_router(authentication.router)
 app.include_router(accommodations.router)
 app.include_router(accommodations.admin_router)
+app.include_router(test_router.router)
 
 if __name__ == "__main__":
     import uvicorn

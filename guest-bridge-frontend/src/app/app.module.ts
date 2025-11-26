@@ -5,7 +5,6 @@ import { AppRoutingModule, routingComponents } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { TopBarComponent } from './components/top-bar/top-bar.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { ChangePasswordDialogComponent } from './components/change-password-dialog/change-password-dialog.component';
 import { AccomodationDetailComponent } from './components/accomodation/accomodation-detail/accomodation-detail.component';
 
 import { MatDialogModule } from '@angular/material/dialog';
@@ -21,16 +20,17 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { ErrorInterceptor } from './interceptors/error.interceptor';
 import { UserRegistrationFormComponent } from './components/users/user-registration-form/user-registration-form.component';
 import { AccomodationRegistrationFormComponent } from './components/accomodation/accomodation-registration-form/accomodation-registration-form.component';
+import { PasswordChangeComponent } from './components/users/password-change/password-change.component';
 @NgModule({
   declarations: [
     AppComponent,
     TopBarComponent,
     routingComponents,
-    ChangePasswordDialogComponent,
     AccomodationDetailComponent,
     RoomCardComponent,
     UserRegistrationFormComponent,
-    AccomodationRegistrationFormComponent
+    AccomodationRegistrationFormComponent,
+    PasswordChangeComponent
   ],
   imports: [
     BrowserModule,

@@ -79,6 +79,7 @@ class AccommodationCreationRequest(BaseModel):
     name: str
     ntak_no: str
     user_id: int
+    szallas_hu_id: str
     vendegem_id: Optional[str] = None
     vendegem_ref: Optional[str] = None
     contact_name: Optional[str] = None
@@ -140,3 +141,23 @@ class SynHistorySchema(BaseModel):
     details: list[SynHistoryDetailSchema]
     created_date: datetime
     created_by: Optional[str] = None
+
+
+class BillingAddressUpdate(BaseModel):
+    id: Optional[int] = None
+    name: Optional[str] = None
+    email: Optional[str] = None
+    tax: Optional[str] = None
+    postcode: Optional[str] = None
+    country: Optional[str] = None
+    city: Optional[str] = None
+    street: Optional[str] = None
+    street_number: Optional[str] = None
+    floor: Optional[str] = None
+    door: Optional[str] = None
+
+
+class UserUpdateRequest(BaseModel):
+    full_name: str
+    email: str
+    billing_info: Optional[BillingAddressUpdate] = None

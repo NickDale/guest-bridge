@@ -9,13 +9,13 @@ from app.services.auth_service import get_current_user, has_admin_role
 
 router = APIRouter(
     prefix="/accommodations",
-    tags=["accommodations"],
+    tags=["Accommodation"],
     dependencies=[Depends(get_current_user)],
 )
 
 admin_router = APIRouter(
     prefix="/accommodations",
-    tags=["accommodations"],
+    tags=["Accommodation"],
     dependencies=[Depends(has_admin_role)],
 )
 

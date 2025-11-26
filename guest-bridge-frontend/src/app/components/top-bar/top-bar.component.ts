@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { AuthService } from 'src/app/services/authentication.service';
+import { isAdmin } from 'src/app/services/security.components';
 
 @Component({
   selector: 'app-top-bar',
@@ -12,14 +13,13 @@ export class TopBarComponent {
   username?: string;
   isLoggedIn: boolean = false;
   private authSubscription?: Subscription;
-  
+
   constructor(
     private router: Router,
     private authService: AuthService
   ) { }
 
   ngOnInit(): void {
-   // this.init();
     this.authSubscription = this.authService.loggedIn$.subscribe(loggedIn => {
       this.isLoggedIn = loggedIn;
       this.username = loggedIn ? this.authService.getUserName() : undefined;
@@ -31,7 +31,15 @@ export class TopBarComponent {
   }
 
   navigateHome(): void {
-    this.router.navigate([this.isLoggedIn ? '/users' : '/']);
+    if (this.isLoggedIn) {
+      const user = this.authService.getUser();
+      if (user) {
+        let navigateTo = isAdmin(user) ? ['/users'] : ['/users', user.id];
+        this.router.navigate(navigateTo)
+      }
+    } else {
+      this.router.navigate(['/']);
+    }
   }
 
   logout(): void {
@@ -39,8 +47,8 @@ export class TopBarComponent {
     this.router.navigate(['/login']);
   }
 
-  init(){
+  init() {
     this.isLoggedIn = false;
-    this.username = undefined; 
+    this.username = undefined;
   }
 }

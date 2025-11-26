@@ -1,5 +1,5 @@
 import { Component, ElementRef, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators} from '@angular/forms';
 import { UserService } from 'src/app/services/user.service';
 
 declare var bootstrap: any;

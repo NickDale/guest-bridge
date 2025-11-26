@@ -1,17 +1,17 @@
 from datetime import timedelta, datetime
 
 from fastapi import HTTPException, Depends
+from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from sqlalchemy.orm import Session
 from starlette import status
 
 from app.services import user_service
-from fastapi.security import OAuth2PasswordBearer
 
 SECRET_KEY = '123456789'
 ALGORITHM = 'HS256'
 ACCESS_TOKEN_EXPIRE_MINUTES = 10
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/authentications/token")
 
 TOKEN_USER_ID = "id"
 TOKEN_USER_NAME = "sub"
@@ -72,6 +72,9 @@ def login(username: str, password: str, db: Session):
     user = user_service.login(username, password, db)
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+
+    if user.blocked_date:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User blocked")
 
     return {
         "access_token": create_access_token(data={

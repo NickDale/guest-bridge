@@ -12,12 +12,12 @@ from app.services.auth_service import has_admin_role, verify_user_access, get_cu
 
 router = APIRouter(
     prefix="/users",
-    tags=["users"],
+    tags=["Users"],
 )
 
 admin_router = APIRouter(
     prefix="/users",
-    tags=["users"],
+    tags=["Users - Admin feature"],
     dependencies=[Depends(has_admin_role)],
 )
 
@@ -35,19 +35,33 @@ def read_users(expect: Optional[str] = Query(None),
     return user_service.list_users_by_filter(expect, types, db)
 
 
+@admin_router.patch("/{user_id}/activate", response_model=None)
+def read_users(user_id: int, logged_user=Depends(get_current_user), db: Session = Depends(get_db)):
+    user_service.activate_user(user_id, logged_user, db)
+
+
+@admin_router.delete("/{user_id}/inactivate", response_model=None)
+def read_users(user_id: int, logged_user=Depends(get_current_user), db: Session = Depends(get_db)):
+    user_service.inactivate_user(user_id, logged_user, db)
+
+
 @router.get("/{user_id}", response_model=schemas.UserDetail)
 def read_user(user_id: int, db: Session = Depends(get_db), verified_user=Depends(verify_user_access)):
-    return user_service.find_user_by_id(user_id, db)
+    return user_service.find_user_details_by_user_id(user_id, db)
+
+
+@router.patch("/{user_id}", response_model=None)
+def read_user(user_id: int, update_request: schemas.UserUpdateRequest,
+              db: Session = Depends(get_db), verified_user=Depends(verify_user_access)):
+    return user_service.update_user_and_billing_info(user_id, update_request, verified_user, db)
 
 
 @router.get("/{user_id}/accommodations", response_model=None)
-def read_user(user_id: int, db: Session = Depends(get_db),
-              verified_user=Depends(verify_user_access)):
+def read_user(user_id: int, db: Session = Depends(get_db), verified_user=Depends(verify_user_access)):
     return user_service.get_accommodations_by_user_id(user_id, db)
 
 
 @router.get("/{user_id}/accommodations/{accommodation_id}", response_model=schemas.AccommodationDetail)
-def get_accommodation_details(user_id: int, accommodation_id: int,
-                              logged_user=Depends(verify_user_access),
+def get_accommodation_details(user_id: int, accommodation_id: int, logged_user=Depends(verify_user_access),
                               db: Session = Depends(get_db)):
     return user_service.get_accommodation_detail(user_id, accommodation_id, db)

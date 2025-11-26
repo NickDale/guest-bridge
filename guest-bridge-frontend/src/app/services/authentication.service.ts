@@ -1,20 +1,8 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Router } from "@angular/router";
-import { Observable, map, catchError, of, BehaviorSubject } from "rxjs";
+import { Observable, map, catchError, BehaviorSubject, throwError } from "rxjs";
 import { environment } from '../../enviroments/environment';
-
-export interface LoggedUser {
-  id: number;
-  role: 'admin' | 'user';
-  full_name: string
-}
-
-export interface AuthResponse {
-  access_token: string;
-  token_type: string;
-  user: LoggedUser;
-}
+import { AuthResponse, LoggedUser } from "../models/authentication";
 
 
 @Injectable({ providedIn: 'root' })
@@ -23,7 +11,7 @@ export class AuthService {
   private loggedInSubject = new BehaviorSubject<boolean>(this.isLoggedIn());
   public loggedIn$ = this.loggedInSubject.asObservable();
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient) { }
 
   login(username: string, password: string): Observable<boolean> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, { username: username, password: password }).pipe(
@@ -40,7 +28,7 @@ export class AuthService {
       }),
       catchError(err => {
         console.error('Hibás belépés', err);
-        return of(false);
+        return throwError(() => err);
       })
     );
   }
@@ -63,8 +51,8 @@ export class AuthService {
   isLoggedIn(): boolean {
     return !!sessionStorage.getItem('user');
   }
-  
-  getToken(){
+
+  getToken() {
     return sessionStorage.getItem('token')
   }
 

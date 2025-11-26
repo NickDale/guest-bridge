@@ -11,7 +11,7 @@ import { SyncComponent } from './components/sync/sync.component';
 import { ConfigComponent } from './components/accomodation/config/config.component';
 import { AccomodationListComponent } from './components/accomodation/accomodation-list/accomodation-list.component';
 import { AccomodationProfileComponent } from './components/accomodation/accomodation-profile/accomodation-profile.component';
-import { adminGuard, userDetailsGuard } from './components/security.components';
+import { adminGuard, userDetailsGuard } from './services/security.components';
 
 
 const routes: Routes = [

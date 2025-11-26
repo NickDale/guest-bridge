@@ -1,70 +1,46 @@
 /* sync-history.component.css */
 
-.sync-table, .details-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
+/* ------------------ MODAL HÁTTÉR ÉS POZÍCIÓ FELÜLÍRÁSA ------------------ */
 
-.sync-table th, .sync-table td,
-.details-table th, .details-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
-.sync-table tr:nth-child(even){background-color: #f9f9f9;}
-.sync-table th {
-  background-color: #007bff;
-  color: white;
-}
-
-/* Stílusok az eredmények kiemeléséhez */
-.success {
-  color: green;
-  font-weight: bold;
-}
-.error {
-  color: red;
-  font-weight: bold;
-}
-.sync-error {
-  background-color: #fdd; /* A teljes hibás sor háttérszíne */
-}
-.detail-error {
-    background-color: #ffeaea;
-}
-
-/* Modal Stílusok */
+/* A .modal d-block használata miatt a Bootstrap alapértelmezett beállítása érvényesül. 
+   Ez a háttérszínt biztosítja, amit a HTML-ben inline stílussal adtál meg. */
 .modal-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+    /* Ezt a stílust már a HTML inline stílusa kezeli: background-color: rgba(0, 0, 0, 0.5); */
+    z-index: 1000;
 }
 
+/* ------------------ EREDMÉNYEK KIEMELÉSE (EGYSÉGESÍTVE) ------------------ */
+
+/* A fő táblázat sora, ha a status 'hiba' (felülírja a table-hover színt) */
+.table-responsive .table > tbody > tr.table-danger,
+.table-responsive .table > tbody > tr.table-danger:hover {
+    /* Az általad kért világos piros háttér */
+    --bs-table-bg-hover: #ffeaea; /* Hover színre is kiterjesztjük */
+    background-color: #fdd !important; 
+}
+
+/* Részletek táblázat sora, ha a status 'hiba' */
+.table-sm > tbody > tr.table-danger {
+    background-color: #ffeaea !important; 
+}
+
+/* Állapot szövegek színezése a részletek táblában */
+.text-success {
+    color: green !important;
+    font-weight: bold;
+}
+.text-danger {
+    color: red !important;
+    font-weight: bold;
+}
+
+/* Egyéb egyedi osztályok megadása a sablonhoz: */
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/* A .modal-content max-width és max-height beállításai */
 .modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  max-width: 80%;
-  max-height: 90%;
-  overflow-y: auto;
-  position: relative;
-}
-
-.close-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  cursor: pointer;
-  border: none;
-  background: transparent;
-  font-size: 1.2em;
+    max-width: 80%;
+    max-height: 90%;
 }

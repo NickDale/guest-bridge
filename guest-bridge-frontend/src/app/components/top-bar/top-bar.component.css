@@ -4,52 +4,96 @@
     justify-content: space-between;
     align-items: center;
     padding: 0 16px;
+    /* KÉK SZÍN MEGTARTÁSA */
     background-color: #1976d2;
     color: white;
     height: 60px;
-  }
-  
-  /* Bal oldali gomb */
-  .home-button {
+}
+ 
+/* Bal oldali gomb */
+.home-button {
     background: none;
     border: none;
     color: white;
     font-size: 24px;
     cursor: pointer;
-  }
-  
-  /* Cím */
-  .app-title {
+    /* Alapértelmezett méret */
+    flex-shrink: 0; 
+}
+ 
+/* Tördelő / Spacer */
+.spacer {
+    /* Kitölti a rendelkezésre álló helyet, a címet nyomja jobbra/balra */
+    flex-grow: 1; 
+}
+
+/* Cím alapértelmezett stílusa (Asztali) */
+.app-title {
     margin-left: 10px;
     font-weight: 500;
     font-size: 1.2rem;
-    flex-grow: 1;
-    white-space: nowrap;
-  }
-  
-  /* Jobb oldal */
-  .user-info {
+    white-space: nowrap; /* Asztali nézetben tartjuk egy sorban */
+    /* Engedjük, hogy kisebb legyen, ha a többi elemnek kell a hely */
+    flex-shrink: 1; 
+}
+
+/* Verziószám */
+.version-info {
+    font-size: 0.8em;
+    font-style: normal;
+    opacity: 0.9;
+}
+ 
+/* Jobb oldal */
+.user-info {
     display: flex;
     align-items: center;
     gap: 1rem;
     font-size: 0.95rem;
-  }
-  
-  .logout-button {
+    /* A gombok fix szélességűek maradnak */
+    flex-shrink: 0; 
+}
+
+/* Kijelentkezés gomb stílusa */
+.logout-button {
     background-color: #d32f2f;
     color: white;
     border: none;
     padding: 5px 10px;
     border-radius: 4px;
     cursor: pointer;
-  }
-  
-  .logout-button:hover {
+    white-space: nowrap;
+}
+ 
+.logout-button:hover {
     background-color: #c62828;
-  }
-  
-  /* Tördelés */
-  .spacer {
-    flex-grow: 1;
-  }
-  
+}
+
+/* ---------------------------------------------------------------------- */
+/* RESZPONZÍV STÍLUSOK (MOBIL MÉRET) */
+/* ---------------------------------------------------------------------- */
+
+@media (max-width: 767px) {
+    .topbar {
+        padding: 0 8px; /* Kisebb padding mobilon */
+    }
+    
+    .app-title {
+        /* A legfontosabb: engedélyezzük a tördelést mobilon */
+        white-space: normal; 
+        font-size: 1rem; /* Kisebb betűméret */
+        /* Flexbox kényszeríti a címet, hogy szükség esetén elnyúljon több sorba */
+        flex-basis: 50%; 
+        line-height: 1.2;
+    }
+    
+    /* Elrejtjük az "Üdvözlünk,..." szöveget helytakarékosság miatt */
+    .user-info .username-text {
+        display: none; 
+    }
+    
+    /* A spacer-t lehet fixre állítani, hogy a címsor jobban jobbra kerüljön a jobb oldali gomboktól */
+    .spacer {
+        flex-grow: 0.1; 
+    }
+}

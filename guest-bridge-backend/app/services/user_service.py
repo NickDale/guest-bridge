@@ -7,7 +7,8 @@ from starlette import status
 
 from app.models.models import User, UserType, Accommodation, Address, UserAccommodation, SubscriptionType
 from app.routers import schemas
-from app.routers.schemas import UserDetail, AccommodationDetail, AddressModel, ExternalConnection
+from app.routers.schemas import UserDetail, AccommodationDetail, AddressModel, ExternalConnection, UserUpdateRequest
+from app.services import accommodation_service
 from app.services.auth_service import USER_NAME
 
 
@@ -47,7 +48,7 @@ def create_user(user_request: schemas.UserCreate, logged_user, db: Session):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-    return format_user_response_data(new_user)
+    return format_user_response_data(new_user, 0)
 
 
 def list_users_by_filter(expect: str, types: str, db: Session):
@@ -64,22 +65,24 @@ def list_users_by_filter(expect: str, types: str, db: Session):
 
     response = []
     for user in users:
-        response.append(format_user_response_data(user))
+        number_of_acc = accommodation_service.number_of_accommodation_by_user_id(db, user.id)
+        response.append(format_user_response_data(user, number_of_acc))
 
     return response
 
 
-def format_user_response_data(user) -> dict:
+def format_user_response_data(user, number_of_acc) -> dict:
     return {
         "id": user.id,
         "username": user.username,
         "full_name": user.full_name,
         "email": user.email,
+        "number_of_accommodations": number_of_acc,
         "status": 'blocked' if user.blocked_date else 'active' if user.activation_date else 'pending'
     }
 
 
-def find_user_by_id(user_id: int, db: Session):
+def find_user_details_by_user_id(user_id: int, db: Session):
     user = (
         db.query(
             User.id.label("id"),
@@ -162,11 +165,23 @@ def get_accommodations_by_user_id(user_id: int, db: Session):
 
 
 def format_accommodation(row) -> dict:
+    address_parts = [
+        f'({row.country})' if row.country else None,
+        row.postcode,
+        row.city,
+        row.street,
+        row.street_number
+    ]
+
+    address_string = ', '.join([str(part).strip() for part in address_parts if part is not None and str(part).strip()])
+    if not address_string:
+        address_string = 'Nincs cím megadva'
+
     return {
         "id": row.id,
         "name": row.display_name,
         "active": row.active,
-        "address": f'({row.country}) {row.postcode} {row.city}, {row.street} {row.street_number}'
+        "address": address_string
     }
 
 
@@ -235,3 +250,72 @@ def get_accommodation_detail(user_id: int, accommodation_id: int, db: Session):
             door=result.door
         )
     )
+
+
+def find_user_by_id(user_id: int, db: Session):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Felhasználó (ID: {user_id}) nem található."
+        )
+    return user
+
+
+def activate_user(user_id: int, logged_user, db: Session):
+    user = find_user_by_id(user_id, db)
+
+    user.blocked_date = None
+    user.activation_date = datetime.now()
+    user.modified_by = logged_user[USER_NAME]
+    user.modified_date = datetime.now()
+
+    db.commit()
+
+
+def inactivate_user(user_id: int, logged_user, db: Session):
+    user = find_user_by_id(user_id, db)
+
+    user.activation_date = None
+    user.blocked_date = datetime.now()
+    user.modified_by = logged_user[USER_NAME]
+    user.modified_date = datetime.now()
+
+    db.commit()
+
+
+def update_user_and_billing_info(user_id: int, update_request: UserUpdateRequest, logged_user, db: Session):
+    user = find_user_by_id(user_id, db)
+
+    user.full_name = update_request.full_name
+    user.email = update_request.email
+    user.modified_by = logged_user[USER_NAME]
+    user.modified_date = datetime.now()
+
+    biu = update_request.billing_info
+    if biu:
+        uba = user.billing_address
+        if not uba:
+            uba = Address()
+            uba.created_by = logged_user[USER_NAME]
+            uba.created_date = datetime.now()
+        else:
+            uba.modified_by = logged_user[USER_NAME]
+            uba.modified_date = datetime.now()
+
+        uba.name = biu.name
+        uba.email = biu.email
+        uba.tax_number = biu.tax
+        uba.postcode = biu.postcode
+        uba.country = biu.country
+        uba.city = biu.city
+        uba.street = biu.street
+        uba.street_number = biu.street_number
+        uba.floor = biu.floor
+        uba.door = biu.door
+
+        db.add(uba)
+        user.billing_address = uba
+
+    db.add(user)
+    db.commit()
