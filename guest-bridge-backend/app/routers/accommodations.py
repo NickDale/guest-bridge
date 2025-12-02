@@ -4,7 +4,7 @@ from starlette import status
 
 from app.core.database import get_db
 from app.routers.schemas import RoomMappingSchema, SynHistorySchema, AccommodationCreationRequest, \
-    ExternalAuth2FAVerifyRequest, ExternalLoginRequest, SessionStatusCheck
+    ExternalAuth2FAVerifyRequest, ExternalLoginRequest
 from app.services import connector_service, accommodation_service
 from app.services.auth_service import get_current_user, has_admin_role
 
@@ -61,14 +61,12 @@ async def external_auth(accommodation_id: int,
                         ext_login_request: ExternalLoginRequest,
                         logged_user=Depends(get_current_user),
                         db: Session = Depends(get_db)):
-    return connector_service.external_login(accommodation_id, connection_type, ext_login_request,logged_user, db)
+    return connector_service.external_login(accommodation_id, connection_type, ext_login_request, logged_user, db)
 
 
-@router.post("/{accommodation_id}/{connection_type}/session-status-check", response_model=None)
-async def external_auth(accommodation_id: int,
-                        connection_type: str,
-                        status_check: SessionStatusCheck):
-    return connector_service.session_status_check(accommodation_id, connection_type, status_check.session_id)
+@router.get("/{accommodation_id}/{connection_type}/session-status-check/{session_id}", response_model=None)
+async def external_auth(accommodation_id: int, connection_type: str, session_id: str):
+    return connector_service.session_status_check(accommodation_id, connection_type, session_id)
 
 
 @router.post("/{accommodation_id}/{connection_type}/verify", response_model=None)

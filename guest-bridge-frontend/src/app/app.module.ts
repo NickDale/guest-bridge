@@ -17,6 +17,7 @@ import { ErrorInterceptor } from './interceptors/error.interceptor';
 import { UserRegistrationFormComponent } from './components/users/user-registration-form/user-registration-form.component';
 import { AccomodationRegistrationFormComponent } from './components/accomodation/accomodation-registration-form/accomodation-registration-form.component';
 import { PasswordChangeComponent } from './components/users/password-change/password-change.component';
+import { SyncStartComponent } from './components/accomodation/sync/sync-start/sync-start.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -25,7 +26,8 @@ import { PasswordChangeComponent } from './components/users/password-change/pass
     AccomodationDetailComponent,
     UserRegistrationFormComponent,
     AccomodationRegistrationFormComponent,
-    PasswordChangeComponent
+    PasswordChangeComponent,
+    SyncStartComponent
   ],
   imports: [
     BrowserModule,

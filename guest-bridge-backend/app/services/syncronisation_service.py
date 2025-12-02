@@ -71,14 +71,22 @@ def start_sync(page: Page, internal_accommodation_id: int, started_by_user_id: s
 
                 if not reservation_found:
                     data = active_item.create_reservation_request_payload_to_vendegem(selected_vendegem_accommodation)
-                    vendegem.create_reservation(request_payload=data)
+                    data_sync_to_vendegem(vendegem,
+                                          sync_history.id,
+                                          str(active_item.reservation_id),
+                                          data,
+                                          db_session
+                                          )
+
+            sync_history.status = 'OK'
 
         except Exception as e:
             sync_history.status = 'FAILED'
             sync_history.error_message = e
-            db_session.add(sync_history)
-            db_session.commit()
             print(e)
+
+        db_session.add(sync_history)
+        db_session.commit()
 
     except Exception as e:
         print(e)
@@ -131,7 +139,37 @@ def init_delete_sync_detail_db_record(sync_history_id: int, reservation_id: str,
     sync_detail.created_date = datetime.now()
     # sync_detail.created_by(f'user_id:{started_by_user_id}')
     sync_detail.debug_message = \
-        f"Delete szallas_hu reservation [{reservation_id}] from Vendegem - roomId[{vendegem_room_id}]"
+        f"Szallas_hu foglalas [{reservation_id}] törlése a Vendegemből - szobaId[{vendegem_room_id}]"
+
+    return sync_detail
+
+
+def data_sync_to_vendegem(vendegem: Vendegem,
+                          sync_history_id: int,
+                          reservation_id: str,
+                          vendegem_payload: dict,
+                          db: Session):
+    sync_detail = init_insert_sync_detail_db_record(sync_history_id, reservation_id)
+    try:
+        vendegem.create_reservation(request_payload=vendegem_payload)
+
+        sync_detail.status = 'OK'
+    except Exception as e:
+        print(e)
+        sync_detail.status = 'FAILED'
+
+    db.add(sync_detail)
+    db.commit()
+
+
+def init_insert_sync_detail_db_record(sync_history_id: int, reservation_id: str):
+    sync_detail = SyncHistoryDetail()
+    sync_detail.sync_id = sync_history_id
+    sync_detail.type = 'INSERT'
+    sync_detail.reservation_id = reservation_id
+    sync_detail.created_date = datetime.now()
+    # sync_detail.created_by(f'user_id:{started_by_user_id}')
+    sync_detail.debug_message = f"Szallas_hu foglalás [{reservation_id}] rögzítése a Vendegembe"
 
     return sync_detail
 

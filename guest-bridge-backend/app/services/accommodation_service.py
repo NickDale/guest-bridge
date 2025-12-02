@@ -46,7 +46,7 @@ def find_accommodation_by_id_response_format(row) -> dict:
 
 def accommodation_sync_histories(db: Session, accommodation_id: int):
     results = db.query(SyncHistory) \
-        .join(SyncHistory.details) \
+        .outerjoin(SyncHistory.details) \
         .filter(SyncHistory.accommodation_id == accommodation_id) \
         .all()
 

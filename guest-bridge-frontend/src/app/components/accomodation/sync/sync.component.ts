@@ -45,4 +45,12 @@ export class SyncComponent {
     this.selectedDetails = record.details;
   }
 
+  openModal() {
+
+  }
+
+  test(){
+    alert('SDFDSDSFSDFDSFSDDSDSF')
+  }
+
 }

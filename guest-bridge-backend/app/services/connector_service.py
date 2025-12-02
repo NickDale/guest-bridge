@@ -93,6 +93,7 @@ def session_status_check(accommodation_id: int,
         pw_session = playwright_sessions[session_id]
         return {
             "step": pw_session['step'],
+            "session_id": session_id,
             "last_update": pw_session['last_update']
         }
     else:
@@ -144,6 +145,8 @@ def szallas_hu_connection(ext_login_request: ExternalLoginRequest,
 def szallas_hu_login_flow(session_id: str, username: str, password: str):
     with sync_playwright() as p:
         # browser = p.chromium.launch(headless=False)
+
+        # local test
         browser = p.chromium.connect_over_cdp("http://localhost:9222")
         page = browser.new_page()
 
@@ -175,7 +178,6 @@ def szallas_hu_login_flow(session_id: str, username: str, password: str):
 
         if has_mfa:
             p_session["step"] = "waiting_2fa"
-            print("waiting.......")
             p_session["last_update"] = time.time()
 
         while p_session["step"] == "waiting_2fa":
@@ -215,12 +217,11 @@ def szallas_hu_login_flow(session_id: str, username: str, password: str):
                        from_date=datetime(2025, 9, 1),
                        to_date=datetime(2025, 11, 1)
                        )
+            p_session["step"] = "done"
+            p_session["last_update"] = time.time()
         except Error:
-            p_session["else"] = "sync_failed"
+            p_session["step"] = "sync_failed"
 
-        p_session["step"] = "done"
-        p_session["last_update"] = time.time()
-
-        # test miatt, hogy ne zárja be
-        while p_session["step"] != "végezdki":
-            time.sleep(0.5)
+        while p_session["step"] not in ['sync_failed', 'done']:
+            print("waiting.....")
+            time.sleep(1)

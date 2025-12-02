@@ -1,6 +1,14 @@
 <div class="container-fluid mt-4">
-    <h2 class="mb-3">Korábbi Szinkronizálások</h2>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Korábbi Szinkronizálások</h2>
 
+        <div>
+            <button class="btn btn-outline-primary" title="Új szinkronizáció indítása" (click)="openModal()"
+                data-bs-toggle="modal" data-bs-target="#syncStartModal">
+                <i class="bi bi-plus-lg"></i>
+            </button>
+        </div>
+    </div>
     <div class="table-responsive shadow-sm rounded-3">
         <table class="table table-striped table-hover align-middle">
             <thead class="table-light">
@@ -16,11 +24,18 @@
                     <td>{{ record.id }}</td>
                     <td>{{ record.created_date | date: 'yyyy.MM.dd. HH:mm:ss' }}</td>
                     <td>
-                        <span class="badge" [ngClass]="{
-                            'bg-success': record.status === 'ok',
-                            'bg-danger': record.status === 'hiba'
+                        <span [ngClass]="{
+                            'text-success': record.status === 'OK',
+                            'text-danger': record.status === 'FAILED',
+                            'text-warning': record.status === 'STARTED'
                         }">
                             {{ record.status | uppercase }}
+                            {{
+                            record.status === 'OK' ? '✔️' :
+                            record.status === 'FAILED' ? '❌' :
+                            record.status === 'STARTED' ? '⏳' :
+                            ''
+                            }}
                         </span>
                     </td>
                     <td class="text-center">
@@ -66,7 +81,9 @@
                             <tbody>
                                 <tr *ngFor="let detail of selectedDetails"
                                     [class.table-danger]="detail.status === 'hiba'">
-                                    <td>{{ detail.type }}</td>
+                                    <td>
+                                        {{ detail.type }}
+                                    </td>
                                     <td>{{ detail.reservation_id }}</td>
                                     <td>
                                         <span [class.text-success]="detail.status === 'sikeres'"
@@ -83,6 +100,22 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" (click)="selectedDetails = null">Bezárás</button>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="syncStartModal" tabindex="-1" aria-labelledby="syncStartModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="syncStartModalLabel">Szinkronizáció indítása</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Bezárás"></button>
+            </div>
+            <div class="modal-body">
+                <app-sync-start (syncStarted)="loadSyncHistory()" [selectedAccommodationId]="accommodationId!"></app-sync-start>
             </div>
         </div>
     </div>
