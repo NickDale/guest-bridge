@@ -79,7 +79,7 @@ class SyncHistoryDetail(Base):
     status = Column(String(255), nullable=True)
     error_message = Column(String(255), nullable=True)
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
-    created_by = Column(String(100), nullable=False)
+    created_by = Column(String(100), nullable=True)
 
     history = relationship("SyncHistory", back_populates="details")
 

@@ -60,7 +60,7 @@ export class UserService {
   }
 
   registerUser(name: string, email: string): Observable<boolean> {
-    return this.http.patch<void>(`${this.apiUrl}/users`, { name: name, email: email }).pipe(
+    return this.http.post<void>(`${this.apiUrl}/users`, { name: name, email: email }).pipe(
       map(response => {
         console.log('User rögzites sikres', response);
         return true;

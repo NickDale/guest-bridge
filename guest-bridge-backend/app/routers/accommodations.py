@@ -3,7 +3,8 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from app.core.database import get_db
-from app.routers.schemas import RoomMappingSchema, SynHistorySchema, AccommodationCreationRequest
+from app.routers.schemas import RoomMappingSchema, SynHistorySchema, AccommodationCreationRequest, \
+    ExternalAuth2FAVerifyRequest, ExternalLoginRequest, SessionStatusCheck
 from app.services import connector_service, accommodation_service
 from app.services.auth_service import get_current_user, has_admin_role
 
@@ -21,8 +22,8 @@ admin_router = APIRouter(
 
 
 @router.get("/vendegem/visible-accommodations", response_model=None)
-def list_all_visible_vendegem_items(db: Session = Depends(get_db)):
-    return connector_service.list_all_accommodation_from_vendegem(db)
+def list_all_visible_vendegem_items():
+    return connector_service.list_all_accommodation_from_vendegem()
 
 
 @router.get("/vendegem/{accommodation_id}/rooms", response_model=None)
@@ -52,3 +53,30 @@ def accommodation_mapping(accommodation_id: int, db: Session = Depends(get_db)):
 @router.get("/{accommodation_id}/sync-history", response_model=list[SynHistorySchema])
 def accommodation_sync_histories(accommodation_id: int, db: Session = Depends(get_db)):
     return accommodation_service.accommodation_sync_histories(db, accommodation_id)
+
+
+@router.post("/{accommodation_id}/{connection_type}/login", response_model=None)
+async def external_auth(accommodation_id: int,
+                        connection_type: str,
+                        ext_login_request: ExternalLoginRequest,
+                        logged_user=Depends(get_current_user),
+                        db: Session = Depends(get_db)):
+    return connector_service.external_login(accommodation_id, connection_type, ext_login_request,logged_user, db)
+
+
+@router.post("/{accommodation_id}/{connection_type}/session-status-check", response_model=None)
+async def external_auth(accommodation_id: int,
+                        connection_type: str,
+                        status_check: SessionStatusCheck):
+    return connector_service.session_status_check(accommodation_id, connection_type, status_check.session_id)
+
+
+@router.post("/{accommodation_id}/{connection_type}/verify", response_model=None)
+async def external_auth_2fa_verify(accommodation_id: int,
+                                   connection_type: str,
+                                   verify_request: ExternalAuth2FAVerifyRequest,
+                                   logged_user=Depends(get_current_user)
+                                   ):
+    return connector_service.external_login_verification(
+        accommodation_id, connection_type, verify_request, logged_user
+    )

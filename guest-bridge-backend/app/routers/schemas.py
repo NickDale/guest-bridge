@@ -166,3 +166,17 @@ class UserUpdateRequest(BaseModel):
 class UserPasswordUpdateRequest(BaseModel):
     old_password: str
     new_password: str
+
+
+class ExternalLoginRequest(BaseModel):
+    username: str
+    password: str
+
+
+class ExternalAuth2FAVerifyRequest(BaseModel):
+    session_id: str
+    code: str
+
+
+class SessionStatusCheck(BaseModel):
+    session_id: str

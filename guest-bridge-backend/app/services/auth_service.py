@@ -8,7 +8,7 @@ from starlette import status
 
 from app.services import user_service
 
-SECRET_KEY = '123456789'
+SECRET_KEY = '0123456789ekahjugWMQjc1LW2EoaLxiUyxO3c5iAw'
 ALGORITHM = 'HS256'
 ACCESS_TOKEN_EXPIRE_MINUTES = 10
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/authentications/token")

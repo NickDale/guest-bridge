@@ -122,3 +122,14 @@ def create_new_accommodation(request: AccommodationCreationRequest, logged_user,
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"An error occurred: {e}"
         )
+
+
+def accommodation_by_id(accommodation_id: int, db: Session):
+    accommodation = db.query(Accommodation).filter(Accommodation.id == accommodation_id).first()
+    if not accommodation:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f'Accommodation not exists with id - {accommodation_id}'
+        )
+    return accommodation
+
