@@ -1,14 +1,18 @@
-<mat-toolbar color="primary" class="topbar">
-    <button mat-icon-button (click)="navigateHome()">
-        <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+<div class="topbar">
+    <button (click)="navigateHome()" class="home-button">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" viewBox="0 0 24 24">
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="white" />
+        </svg>
     </button>
-    <span class="app-title">Guest-Bridge - Szállás.hu - Vendégem adattovábbító <i>v1.0</i></span>
-  
+
+    <span class="app-title">Guest-Bridge - Szállás.hu - Vendégem adattovábbító <i class="version-info">v1.0</i></span>
+
     <span class="spacer"></span>
- 
-    <div class="user-info">
-      <span>Üdvözlünk, {{ username || 'anonymus' }}</span>
-      <button *ngIf="isLoggedIn" mat-button (click)="logout()">Kijelentkezés</button>
+
+    <div *ngIf="isLoggedIn" class="user-info">
+        <span class="username-text">Üdvözlünk, {{ username }}</span>
+        <button (click)="logout()" class="logout-button">
+            Kijelentkezés
+        </button>
     </div>
-  </mat-toolbar>
-  
+</div>

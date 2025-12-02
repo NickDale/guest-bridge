@@ -1,6 +1,7 @@
-from sqlalchemy.orm import declarative_base
 import datetime
+
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Boolean
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import relationship
 
 Base = declarative_base()
@@ -16,7 +17,7 @@ class User(Base):
     type_id = Column(Integer, ForeignKey("user_types.id"), nullable=False)
     activation_date = Column(DateTime, nullable=True)
     blocked_date = Column(DateTime, nullable=True)
-    subscription_type_id = Column(Integer, ForeignKey("subscription_types.id"), nullable=False)
+    subscription_type_id = Column(Integer, ForeignKey("subscription_types.id"), nullable=True)
     encrypted_secret = Column(String(255), nullable=False)
     salt = Column(String(255), nullable=True)
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
@@ -25,6 +26,7 @@ class User(Base):
     modified_date = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
     user_type = relationship("UserType", back_populates="users")
+    billing_address = relationship("Address", back_populates="users")
 
 
 class Accommodation(Base):
@@ -50,6 +52,36 @@ class Accommodation(Base):
 
     address = relationship("Address", back_populates="accommodations")
     room_mappings = relationship("RoomMapping", back_populates="accommodation")
+    sync_histories = relationship("SyncHistory", back_populates="accommodation")
+
+
+class SyncHistory(Base):
+    __tablename__ = "sync_histories"
+    id = Column(Integer, primary_key=True, index=True)
+    accommodation_id = Column(Integer, ForeignKey("accommodations.id"), nullable=False)
+    debug_message = Column(String(255), nullable=True)
+    status = Column(String(255), nullable=True)
+    error_message = Column(String(255), nullable=True)
+    created_date = Column(DateTime, default=datetime.datetime.utcnow)
+    created_by = Column(String(100), nullable=False)
+
+    accommodation = relationship("Accommodation", back_populates="sync_histories")
+    details = relationship("SyncHistoryDetail", back_populates="history")
+
+
+class SyncHistoryDetail(Base):
+    __tablename__ = "sync_history_details"
+    id = Column(Integer, primary_key=True, index=True)
+    sync_id = Column(Integer, ForeignKey("sync_histories.id"), nullable=False)
+    reservation_id = Column(String(255))
+    debug_message = Column(String(255), nullable=True)
+    type = Column(String(150))
+    status = Column(String(255), nullable=True)
+    error_message = Column(String(255), nullable=True)
+    created_date = Column(DateTime, default=datetime.datetime.utcnow)
+    created_by = Column(String(100), nullable=True)
+
+    history = relationship("SyncHistory", back_populates="details")
 
 
 class Address(Base):
@@ -71,21 +103,24 @@ class Address(Base):
     modified_date = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
     accommodations = relationship("Accommodation", back_populates="address")
+    users = relationship("User", back_populates="billing_address")
+
 
 class RoomMapping(Base):
     __tablename__ = "room_mappings"
     id = Column(Integer, primary_key=True, index=True)
     accommodation_id = Column(Integer, ForeignKey("accommodations.id"), nullable=False)
-    szallas_hu_ext_room_id = Column(String(255))
-    szallas_hu_ext_room_name = Column(String(50))
-    vendegem_ext_room_id = Column(String(255))
-    vendegem_ext_room_name = Column(String(50))
+    szallas_hu_ext_room_id = Column(String(255), nullable=True)
+    szallas_hu_ext_room_name = Column(String(50), nullable=True)
+    vendegem_ext_room_id = Column(String(255), nullable=True)
+    vendegem_ext_room_name = Column(String(50), nullable=True)
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
     created_by = Column(String(100), nullable=False)
     modified_by = Column(String(100))
     modified_date = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
     accommodation = relationship("Accommodation", back_populates="room_mappings")
+
 
 class SubscriptionType(Base):
     __tablename__ = "subscription_types"

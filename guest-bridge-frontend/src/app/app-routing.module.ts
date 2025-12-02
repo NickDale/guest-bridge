@@ -7,11 +7,11 @@ import { UserProfileComponent } from './components/users/user-profile/user-profi
 import { UserDetailsComponent } from './components/users/user-details/user-details.component';
 import { ForgottenPasswordComponent } from './pages/forgotten-password/forgotten-password.component';
 import { ConnectionsComponent } from './components/accomodation/connections/connections.component';
-import { SyncComponent } from './components/sync/sync.component';
+import { SyncComponent } from './components/accomodation/sync/sync.component';
 import { ConfigComponent } from './components/accomodation/config/config.component';
 import { AccomodationListComponent } from './components/accomodation/accomodation-list/accomodation-list.component';
 import { AccomodationProfileComponent } from './components/accomodation/accomodation-profile/accomodation-profile.component';
-import { adminGuard, userDetailsGuard } from './components/security.components';
+import { adminGuard, userDetailsGuard } from './services/security.components';
 
 
 const routes: Routes = [

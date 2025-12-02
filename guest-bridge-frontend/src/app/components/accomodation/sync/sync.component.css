@@ -1,0 +1,46 @@
+/* sync-history.component.css */
+
+/* ------------------ MODAL HÁTTÉR ÉS POZÍCIÓ FELÜLÍRÁSA ------------------ */
+
+/* A .modal d-block használata miatt a Bootstrap alapértelmezett beállítása érvényesül. 
+   Ez a háttérszínt biztosítja, amit a HTML-ben inline stílussal adtál meg. */
+.modal-backdrop {
+    /* Ezt a stílust már a HTML inline stílusa kezeli: background-color: rgba(0, 0, 0, 0.5); */
+    z-index: 1000;
+}
+
+/* ------------------ EREDMÉNYEK KIEMELÉSE (EGYSÉGESÍTVE) ------------------ */
+
+/* A fő táblázat sora, ha a status 'hiba' (felülírja a table-hover színt) */
+.table-responsive .table > tbody > tr.table-danger,
+.table-responsive .table > tbody > tr.table-danger:hover {
+    /* Az általad kért világos piros háttér */
+    --bs-table-bg-hover: #ffeaea; /* Hover színre is kiterjesztjük */
+    background-color: #fdd !important; 
+}
+
+/* Részletek táblázat sora, ha a status 'hiba' */
+.table-sm > tbody > tr.table-danger {
+    background-color: #ffeaea !important; 
+}
+
+/* Állapot szövegek színezése a részletek táblában */
+.text-success {
+    color: green !important;
+    font-weight: bold;
+}
+.text-danger {
+    color: red !important;
+    font-weight: bold;
+}
+
+/* Egyéb egyedi osztályok megadása a sablonhoz: */
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/* A .modal-content max-width és max-height beállításai */
+.modal-content {
+    max-width: 80%;
+    max-height: 90%;
+}

@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivateFn, Router } from '@angular/router';
-import { AuthService } from '../services/authentication.service';
+import { AuthService } from './authentication.service';
 
 
 export function isAdmin(user: { role?: string } | null | undefined): boolean {
@@ -38,10 +38,7 @@ export const userDetailsGuard: CanActivateFn = (route: ActivatedRouteSnapshot) =
 
   if (currentUser.id === userIdParam) {
     return true;
-  } else {
+  } 
     router.navigate([`/users/${currentUser.id}`]);
     return false;
-  }
-
-  return false;
 };

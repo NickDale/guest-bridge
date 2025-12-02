@@ -5,49 +5,59 @@
 <div *ngIf="!loading && accommodation">
 
   <div class="profile-container">
-    <div class="header">
-      <h5> <strong>{{ accommodation.name }}</strong> [{{accommodation.id}}]</h5>
-      <span><b>NTAK:</b> {{ accommodation.reg_number }} </span>
-      <span><b>Reg date:</b> {{ accommodation.created_date | date: 'yyyy-MM-dd' }} </span>
-      <div class="actions">
+    <div class="header d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+
+      <div class="header-info d-flex flex-column mb-3 mb-md-0">
+        <h5> <strong>{{ accommodation.name }}</strong> [{{accommodation.id}}]</h5>
+
+        <div class="meta-data d-flex flex-wrap gap-3 mt-1">
+          <span [ngClass]="statusClass"><b>Státusz:</b> {{ statusText | uppercase }} </span>
+          <span><b>NTAK:</b> {{ accommodation.reg_number }} </span>
+          <span><b>Reg. dátum:</b> {{ accommodation.created_date | date: 'yyyy-MM-dd' }} </span>
+        </div>
+      </div>
+
+      <div class="actions d-flex gap-2">
         <button (click)="toggleEdit()" [ngClass]="isEditing ? 'btn btn-outline-danger':'btn btn-outline-primary'">
           <i class="bi" [ngClass]="isEditing ? 'bi-x' : 'bi-pencil'"></i>
-          {{ isEditing ? 'Cancel' : 'Edit' }}
+          {{ isEditing ? 'Mégse' : 'Szerk.' }}
         </button>
-        <!-- <button (click)="openChangePasswordDialog()" class="btn btn-outline-secondary">
-          Change Password</button> -->
+        <button *ngIf="isEditing" (click)="save()" [disabled]="accomodationForm.invalid" class="btn btn-success">
+          <i class="bi bi-check-circle me-1"></i> Mentés
+        </button>
       </div>
     </div>
 
-    <div class="columns">
-      <div class="column">
+    <div class="row mt-4">
+      <div class="col-12 col-md-6">
         <form [formGroup]="accomodationForm" (ngSubmit)="save()">
-          <div class="column">
-            <div class="field">
-              <label>address:</label>
-              <input formControlName="address" />
-              <div *ngIf="accomodationForm.controls['address'].invalid && accomodationForm.controls['address'].touched"
-                class="error">
-                address validáció failed
-              </div>
-            </div>
-            <div class="field">
-              <label>kapcsolattartó neve:</label>
-              <input formControlName="contactName" />
-            </div>
-            <div class="field">
-              <label>kapcsolattartó telefonszáma:</label>
-              <input formControlName="contactPhone" />
-            </div>
-            <div class="field">
-              <label>kapcsolattartó emailcíme:</label>
-              <input formControlName="contactEmail" />
-            </div>
+
+          <div class="field d-flex align-items-center mb-3">
+            <label class="me-3 mb-0">Cím:</label>
+            <span class="form-control-static me-3">{{ addressString }}</span>
+
+            <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal"
+              data-bs-target="#addressNotEditableModal">
+              <i class="bi bi-info-circle-fill"></i>
+            </button>
+          </div>
+
+          <div class="field">
+            <label>Kapcsolattartó neve:</label>
+            <input formControlName="contactName" />
+          </div>
+          <div class="field">
+            <label>Kapcsolattartó telefonszáma:</label>
+            <input formControlName="contactPhone" />
+          </div>
+          <div class="field">
+            <label>Kapcsolattartó emailcíme:</label>
+            <input formControlName="contactEmail" />
           </div>
         </form>
       </div>
 
-      <div class="column">
+      <div class="col-12 col-md-6">
         <div class="field">
           <app-connection-comp [accommodationId]="accommodationId" [type]="szallas_hu"></app-connection-comp>
         </div>
@@ -56,21 +66,27 @@
         </div>
       </div>
     </div>
-
-    <button *ngIf="isEditing" (click)="save()" [disabled]="accomodationForm.invalid">Save</button>
   </div>
 
-  <!-- <p><strong>Státusz:</strong>
-    <span [ngClass]="{ 'text-success': accommodationDetail.active, 'text-danger': !accommodationDetail.active }">
-      {{ accommodationDetail.active ? 'Aktív' : 'Inaktív' }}
-    </span>
-  </p> -->
-
-
-  <!-- 🔽 Két komponens egymás mellett -->
-  <!-- <div class="row mt-4">
-    <div class="col-md-6">
-      <app-accommodation-config [accommodationId]="accommodationId"></app-accommodation-config>
+  <div class="modal fade" id="addressNotEditableModal" tabindex="-1" aria-labelledby="addressModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addressModalLabel">Cím Módosítása</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p class="lead text-danger">
+            <strong>A cím adatok jelenleg nem módosíthatók ezen a felületen.</strong>
+          </p>
+          <p>A jelenlegi cím: **{{ addressString }}**</p>
+          <p>Kérjük, vegye fel a kapcsolatot a rendszergazdával a változtatáshoz.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bezárás</button>
+        </div>
+      </div>
     </div>
-  </div> -->
+  </div>
 </div>

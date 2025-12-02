@@ -1,5 +1,68 @@
-<form (ngSubmit)="onSubmit()">
-    <input [(ngModel)]="username" placeholder="Felhasználónév" name="username" required />
-    <input [(ngModel)]="password" type="password" placeholder="Jelszó" name="password" required />
-    <button type="submit">Bejelentkezés</button>
-  </form>
+<div class="container d-flex justify-content-center align-items-center min-vh-100 mt-4">
+  <div class="w-100" style="max-width: 420px;">
+    <div class="card shadow-sm p-4">
+      <h1 class="h4 text-center mb-4">Bejelentkezés</h1>
+      <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+        {{ errorMessage }}
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+        <div class="mb-3">
+          <label class="form-label">Felhasználónév</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+
+            <input formControlName="username" class="form-control" placeholder="Felhasználónév" name="username" required
+              [ngClass]="{'is-invalid': loginFormCtrl['username'].invalid && (loginFormCtrl['username'].dirty || loginFormCtrl['username'].touched)}" />
+          </div>
+
+          <div
+            *ngIf="loginFormCtrl['username'].invalid && (loginFormCtrl['username'].dirty || loginFormCtrl['username'].touched)"
+            class="invalid-feedback d-block">
+            <div *ngIf="loginFormCtrl['username'].errors!['required']">
+              A felhasználónév megadása kötelező.
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <div class="d-flex justify-content-between">
+            <label class="form-label">Jelszó</label>
+          </div>
+
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+
+            <input [type]="passwordFieldType" formControlName="password" id="password" class="form-control"
+              placeholder="Jelszó" name="password" required
+              [ngClass]="{'is-invalid': loginFormCtrl['password'].invalid && (loginFormCtrl['password'].dirty || loginFormCtrl['password'].touched)}" />
+
+            <button type="button" class="input-group-text password-toggle" (click)="togglePasswordVisibility()">
+              <i class="bi"
+                [ngClass]="{ 'bi-eye': passwordFieldType === 'password', 'bi-eye-slash': passwordFieldType === 'text' }"
+                id="toggleIcon"></i>
+            </button>
+          </div>
+
+          <div
+            *ngIf="loginFormCtrl['password'].invalid && (loginFormCtrl['password'].dirty || loginFormCtrl['password'].touched)"
+            class="invalid-feedback d-block">
+            <div *ngIf="loginFormCtrl['password'].errors!['required']">
+              A jelszó megadása kötelező.
+            </div>
+            <div *ngIf="loginFormCtrl['password'].errors!['minlength']">
+              A jelszó minimum {{ loginForm.controls['password'].errors!['minlength'].requiredLength }} karakter kell,
+              hogy legyen.
+            </div>
+          </div>
+          <a href="#" class="small">Elfelejtett jelszó?</a>
+        </div>
+
+        <button class="btn btn-primary w-100 mt-3" type="submit" [disabled]="loginForm.invalid">
+          Belépés
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

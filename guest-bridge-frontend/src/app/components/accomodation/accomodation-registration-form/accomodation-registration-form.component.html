@@ -1,0 +1,83 @@
+<form [formGroup]="accommodationForm" (ngSubmit)="onSubmit()">
+    <div class="row">
+        <div class="col-12 col-md-6 mb-3">
+            <label for="name" class="form-label">Teljes név (*)</label>
+            <input type="text" id="name" formControlName="name" class="form-control"
+                [ngClass]="{ 'is-invalid': submitted && form['name'].errors }">
+            <div *ngIf="submitted && form['name'].errors" class="invalid-feedback">
+                <div *ngIf="form['name'].errors['required']">A név kötelező.</div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 mb-3">
+            <label for="ntak" class="form-label">NTAK szám (*)</label>
+            <input type="text" id="ntak" formControlName="ntak" class="form-control"
+                [ngClass]="{ 'is-invalid': submitted && form['ntak'].errors }">
+            <div *ngIf="submitted && form['ntak'].errors" class="invalid-feedback">
+                <div *ngIf="form['ntak'].errors['required']">NTAK regisztációs szám kötelező</div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 mb-3">
+            <label for="postcode" class="form-label">Írányítószám </label>
+            <input type="text" id="postcode" formControlName="postcode" class="form-control">
+        </div>
+        <div class="col-12 col-md-6 mb-3">
+            <label for="city" class="form-label">Település (*)</label>
+            <input type="text" id="city" formControlName="city" class="form-control"
+                [ngClass]="{ 'is-invalid': submitted && form['city'].errors }">
+            <div *ngIf="submitted && form['city'].errors" class="invalid-feedback">
+                <div *ngIf="form['city'].errors['required']">A település megadása kötelező.</div>
+            </div>
+        </div>
+
+
+        <div class="col-12 col-md-6 mb-3">
+            <label for="street" class="form-label">Közterület neve (*)</label>
+            <input type="text" id="street" formControlName="street" class="form-control"
+                [ngClass]="{ 'is-invalid': submitted && form['street'].errors }">
+            <div *ngIf="submitted && form['street'].errors" class="invalid-feedback">
+                <div *ngIf="form['street'].errors['required']">A Közterület megadása kötelező.</div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 mb-3">
+            <label for="streetNo" class="form-label">Házszám (*)</label>
+            <input type="text" id="streetNo" formControlName="streetNo" class="form-control"
+                [ngClass]="{ 'is-invalid': submitted && form['streetNo'].errors }">
+            <div *ngIf="submitted && form['streetNo'].errors" class="invalid-feedback">
+                <div *ngIf="form['streetNo'].errors['required']">A házszám megadása kötelező.</div>
+            </div>
+        </div>
+
+        <hr>
+        <div class="col-12 col-md-6 mb-3">
+            <label for="szallasHuId" class="form-label">Szállás.hu szálláshely azonosító szám (*)</label>
+            <input type="text" id="szallasHuId" formControlName="szallasHuId" class="form-control"
+                [ngClass]="{ 'is-invalid': submitted && form['szallasHuId'].errors }">
+            <div *ngIf="submitted && form['szallasHuId'].errors" class="invalid-feedback">
+                <div *ngIf="form['szallasHuId'].errors['required']">A szállás.hu azonosító kötelező.</div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 mb-3">
+        </div>
+
+        <div class="col-12 col-md-6 mb-3">
+            <label for="vendegemId" class="form-label">Vendégem szálláshely azonosító</label>
+            <input type="text" id="vendegemId" formControlName="vendegemId" class="form-control">
+        </div>
+
+        <div class="col-12 col-md-6 mb-3">
+            <label for="vendegemRef" class="form-label">Vendégem külső ref.</label>
+            <input type="text" id="vendegemRef" formControlName="vendegemRef" class="form-control">
+        </div>
+
+    </div>
+    <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+        {{ errorMessage }}
+    </div>
+
+    <div class="text-end mt-3">
+        <button type="submit" class="btn btn-success">Szálláshely rögzítése</button>
+    </div>
+
+</form>

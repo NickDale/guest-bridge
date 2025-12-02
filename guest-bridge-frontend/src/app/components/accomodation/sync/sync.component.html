@@ -1,0 +1,122 @@
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Korábbi Szinkronizálások</h2>
+
+        <div>
+            <button class="btn btn-outline-primary" title="Új szinkronizáció indítása" (click)="openModal()"
+                data-bs-toggle="modal" data-bs-target="#syncStartModal">
+                <i class="bi bi-plus-lg"></i>
+            </button>
+        </div>
+    </div>
+    <div class="table-responsive shadow-sm rounded-3">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Sync ID</th>
+                    <th>Dátum</th>
+                    <th>Eredmény</th>
+                    <th class="text-center">Tételek száma</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let record of syncHistory" [class.table-danger]="record.status === 'hiba'">
+                    <td>{{ record.id }}</td>
+                    <td>{{ record.created_date | date: 'yyyy.MM.dd. HH:mm:ss' }}</td>
+                    <td>
+                        <span [ngClass]="{
+                            'text-success': record.status === 'OK',
+                            'text-danger': record.status === 'FAILED',
+                            'text-warning': record.status === 'STARTED'
+                        }">
+                            {{ record.status | uppercase }}
+                            {{
+                            record.status === 'OK' ? '✔️' :
+                            record.status === 'FAILED' ? '❌' :
+                            record.status === 'STARTED' ? '⏳' :
+                            ''
+                            }}
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <span *ngIf="record.details.length > 0; else noDetails" (click)="openDetailsModal(record)"
+                            class="badge bg-info text-dark text-decoration-none cursor-pointer" tabindex="0"
+                            title="Kattintson a részletek megtekintéséhez">
+                            <i class="bi bi-list-columns-reverse me-1"></i>
+                            {{ record.details.length }} tétel
+                        </span>
+
+                        <ng-template #noDetails>
+                            <span class="badge bg-secondary">
+                                0 tétel
+                            </span>
+                        </ng-template>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div *ngIf="selectedDetails" class="modal d-block" tabindex="-1" role="dialog" aria-modal="true"
+        style="background-color: rgba(0, 0, 0, 0.5);">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Szinkronizáció Részletei ({{ selectedDetails[0]!.created_date | date:
+                        'yyyy-MM-dd' }})</h5>
+                    <button type="button" class="btn-close" (click)="selectedDetails = null"
+                        aria-label="Bezárás"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Típus</th>
+                                    <th>Foglalási azonosító</th>
+                                    <th>Státusz</th>
+                                    <th>Log</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let detail of selectedDetails"
+                                    [class.table-danger]="detail.status === 'hiba'">
+                                    <td>
+                                        {{ detail.type }}
+                                    </td>
+                                    <td>{{ detail.reservation_id }}</td>
+                                    <td>
+                                        <span [class.text-success]="detail.status === 'sikeres'"
+                                            [class.text-danger]="detail.status === 'hiba'">
+                                            {{ detail.status | titlecase }}
+                                        </span>
+                                    </td>
+                                    <td>{{ detail.debug_message }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="selectedDetails = null">Bezárás</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="syncStartModal" tabindex="-1" aria-labelledby="syncStartModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="syncStartModalLabel">Szinkronizáció indítása</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Bezárás"></button>
+            </div>
+            <div class="modal-body">
+                <app-sync-start (syncStarted)="loadSyncHistory()" [selectedAccommodationId]="accommodationId!"></app-sync-start>
+            </div>
+        </div>
+    </div>
+</div>

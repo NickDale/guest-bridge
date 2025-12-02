@@ -1,5 +1,5 @@
 import { Component, Input, SimpleChanges } from '@angular/core';
-import { ConnectionType, Property } from 'src/app/models/property-connection';
+import { ConnectionStatus, ConnectionType, Property } from 'src/app/models/property-connection';
 import { AccommodationService } from 'src/app/services/accommodation.service';
 
 @Component({
@@ -35,20 +35,25 @@ export class ConnectionsComponent {
     }, 500);
   }
 
-  toggleEdit() {
-    this.isEditing = !this.isEditing;
-    /*if (this.isEditing) {
-      this.accomodationForm.enable();
-    } else {
-      this.accomodationForm.disable();
-    }*/
+  openModal(property: Property) {
   }
 
-  save() {
-
+  get szallasHuProperty(): boolean {
+    if (!this.property) {
+      return false;
+    }
+    return this.property.type === ConnectionType.SZALLAS_HU;
   }
 
-  openModal(property:Property) {
 
+  get showVendegemFailedCheckMessage(): boolean {
+    if (!this.property) {
+      return false;
+    }
+
+    return (
+      this.property.type === ConnectionType.VENDEGEM &&
+      this.property.status === ConnectionStatus.FAILED
+    );
   }
 }

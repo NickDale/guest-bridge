@@ -1,146 +1,158 @@
-<div *ngIf="!loading" class="profile-container">
-  <div class="header">
-    <h2>User Profile</h2>
-    <div class="actions">
+<div *ngIf="!loading" class="profile-container container mt-4">
+
+  <div
+    class="header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+
+    <h2>Felhasználói profil</h2>
+
+    <div class="actions d-flex gap-2 mt-3 mt-md-0">
       <button (click)="toggleEdit()" [ngClass]="isEditing ? 'btn btn-outline-danger':'btn btn-outline-primary'">
         <i class="bi" [ngClass]="isEditing ? 'bi-x' : 'bi-pencil'"></i>
-        {{ isEditing ? 'Cancel' : 'Edit' }}
+        {{ isEditing ? 'Mégse' : 'Szerk.' }}
       </button>
 
       <button *ngIf="isEditing" (click)="onSubmit()" [disabled]="userForm.invalid" class="btn btn-success">
-        <i class="bi bi-check-circle me-1">Save</i>
+        <i class="bi bi-check-circle me-1"></i>Mentés
       </button>
 
-      <button (click)="openChangePasswordDialog()" class="btn btn-outline-secondary">
-        Change Password</button>
+      <button *ngIf="!isEditing" class="btn btn-outline-secondary" data-bs-toggle="modal"
+        data-bs-target="#changePasswordModal">
+        Jelszóváltoztatás
+      </button>
     </div>
   </div>
 
   <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
-    <div class="columns">
-      <div class="column">
-        <h3>User Info</h3>
-        <div class="field">
-          <label>Name:</label>
-          <input formControlName="full_name" />
-          <div *ngIf="userForm.controls['full_name'].invalid && userForm.controls['full_name'].touched" class="error">
-            Name is required.
+
+    <div class="row">
+
+      <div class="col-12 col-md-6 mb-4">
+        <h3>Felhasználó adatok</h3>
+
+        <div class="field mb-3">
+          <label class="form-label">Név:</label>
+          <input formControlName="full_name" class="form-control" [readonly]="!isEditing" />
+          <div *ngIf="userForm.controls['full_name'].invalid && userForm.controls['full_name'].touched"
+            class="error text-danger">
+            Név megadása kötelező
           </div>
         </div>
-        <div class="field">
-          <label>Email:</label>
-          <input formControlName="email" />
-          <div *ngIf="userForm.controls['email'].invalid && userForm.controls['email'].touched" class="error">
-            Email address must be valid.
+
+        <div class="field mb-3">
+          <label class="form-label">Email:</label>
+          <input formControlName="email" class="form-control" [readonly]="!isEditing" />
+          <div *ngIf="userForm.controls['email'].invalid && userForm.controls['email'].touched"
+            class="error text-danger">
+            Email cím megadása kötelező
           </div>
         </div>
-        <div class="field">
-          <label>Username:</label>
-          <span>{{ user.username }}</span>
+
+        <div class="field mb-3">
+          <label class="form-label">Felhasználónév:</label>
+          <span class="form-control-static d-block">{{ user.username }}</span>
         </div>
-        <div class="field">
-          <label>status:</label>
-          <span>{{ user.status }}</span>
+        <div class="field mb-3">
+          <label class="form-label">Stétus:</label>
+          <span class="form-control-static d-block">{{ user.status }}</span>
         </div>
-        <div class="field">
-          <label>Subscription:</label>
-          <span>{{ user.subscription_type }}</span>
+        <div class="field mb-3">
+          <label class="form-label">Előfizetés:</label>
+          <span class="form-control-static d-block">{{ user.subscription_type }}</span>
         </div>
-        <div class="columns">
-          <div class="column">
-            <div class="field">
-              <label>Created:</label>
-              <span>{{ user.created_date | date: 'yyyy-MM-dd' }}</span>
+
+        <div class="row">
+          <div class="col-6">
+            <div class="field mb-3">
+              <label class="form-label">Létrehozva:</label>
+              <span class="form-control-static d-block">{{ user.created_date | date: 'yyyy-MM-dd' }}</span>
             </div>
           </div>
-          <div class="column">
-            <div class="field">
-              <label>Activated:</label>
-              <span>{{ user.activation_date | date: 'yyyy-MM-dd' }}</span>
+          <div class="col-6">
+            <div class="field mb-3">
+              <label class="form-label">Aktiválva:</label>
+              <span class="form-control-static d-block">{{ user.activation_date | date: 'yyyy-MM-dd' }}</span>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Billing Info Oszlop -->
-      <div class="column">
-        <h3>Billing Info</h3>
-        <div class="field">
-          <label>Name</label>
-          <input formControlName="billingName" />
+      <div class="col-12 col-md-6 mb-4">
+        <h3>Számlázási adatok</h3>
+
+        <div class="field mb-3">
+          <label class="form-label">Név</label>
+          <input formControlName="billingName" class="form-control" [readonly]="!isEditing" />
           <div *ngIf="userForm.controls['billingName'].invalid && userForm.controls['billingName'].touched"
-            class="error">
-            Billing address is required.
+            class="error text-danger">
+            Billing name is required.
           </div>
         </div>
-        <div class="field">
-          <label>Email:</label>
-          <input formControlName="billingEmail" />
+        <div class="field mb-3">
+          <label class="form-label">Email:</label>
+          <input formControlName="billingEmail" class="form-control" [readonly]="!isEditing" />
           <div *ngIf="userForm.controls['billingEmail'].invalid && userForm.controls['billingEmail'].touched"
-            class="error">
-            Billing address is required.
+            class="error text-danger">
+            Billing email is required.
           </div>
         </div>
-        <div class="field">
-          <label>Tax</label>
-          <input formControlName="tax" />
-          <div *ngIf="userForm.controls['tax'].invalid && userForm.controls['tax'].touched" class="error">
-            Billing address is required.
+        <div class="field mb-3">
+          <label class="form-label">Adószám</label>
+          <input formControlName="tax" class="form-control" [readonly]="!isEditing" />
+          <div *ngIf="userForm.controls['tax'].invalid && userForm.controls['tax'].touched" class="error text-danger">
+            Tax number is required.
           </div>
         </div>
-        <div class="field">
-          <label>Country:</label>
-          <input formControlName="country" />
-          <div *ngIf="userForm.controls['country'].invalid && userForm.controls['country'].touched" class="error">
-            Billing address is required.
+        <div class="field mb-3">
+          <div class="field mb-3">
+            <label class="form-label">Ország:</label>
+            <span class="form-control-static d-block">{{ userForm.get('country')?.value }}</span>
           </div>
         </div>
 
-        <div class="columns">
-          <div class="column">
-            <div class="field">
-              <label>postcode:</label>
-              <input formControlName="postcode" />
-              <div *ngIf="userForm.controls['postcode'].invalid && userForm.controls['postcode'].touched" class="error">
-                Billing address is required.
+        <div class="row">
+          <div class="col-6">
+            <div class="field mb-3">
+              <label class="form-label">Irányítószám:</label>
+              <input formControlName="postcode" class="form-control" [readonly]="!isEditing" />
+              <div *ngIf="userForm.controls['postcode'].invalid && userForm.controls['postcode'].touched"
+                class="error text-danger">
+                Postcode is required.
               </div>
             </div>
-            <div class="field">
-              <label>street</label>
-              <input formControlName="street" />
-              <div *ngIf="userForm.controls['street'].invalid && userForm.controls['street'].touched" class="error">
-                Billing address is required.
+            <div class="field mb-3">
+              <label class="form-label">Utca</label>
+              <input formControlName="street" class="form-control" [readonly]="!isEditing" />
+              <div *ngIf="userForm.controls['street'].invalid && userForm.controls['street'].touched"
+                class="error text-danger">
+                Street is required.
               </div>
             </div>
-            <div class="field">
-              <label>Floor:</label>
-              <input formControlName="floor" />
-              <div *ngIf="userForm.controls['floor'].invalid && userForm.controls['floor'].touched" class="error">
-                Billing address is required.
-              </div>
+            <div class="field mb-3">
+              <label class="form-label">Emelet:</label>
+              <input formControlName="floor" class="form-control" [readonly]="!isEditing" />
             </div>
-
           </div>
 
-          <div class="column">
-            <div class="field">
-              <label>city:</label>
-              <input formControlName="city" />
-              <div *ngIf="userForm.controls['city'].invalid && userForm.controls['city'].touched" class="error">
-                Billing address is required.
+          <div class="col-6">
+            <div class="field mb-3">
+              <label class="form-label">Város:</label>
+              <input formControlName="city" class="form-control" [readonly]="!isEditing" />
+              <div *ngIf="userForm.controls['city'].invalid && userForm.controls['city'].touched"
+                class="error text-danger">
+                City is required.
               </div>
             </div>
-            <div class="field">
-              <label>Street Nr</label>
-              <input formControlName="streetNr" />
-              <div *ngIf="userForm.controls['streetNr'].invalid && userForm.controls['streetNr'].touched" class="error">
-                Billing address is required.
+            <div class="field mb-3">
+              <label class="form-label">Házszám</label>
+              <input formControlName="streetNr" class="form-control" [readonly]="!isEditing" />
+              <div *ngIf="userForm.controls['streetNr'].invalid && userForm.controls['streetNr'].touched"
+                class="error text-danger">
+                Street number is required.
               </div>
             </div>
-
-            <div class="field">
-              <label>Door:</label>
-              <input formControlName="door" />
+            <div class="field mb-3">
+              <label class="form-label">Ajtó:</label>
+              <input formControlName="door" class="form-control" [readonly]="!isEditing" />
             </div>
           </div>
         </div>
@@ -148,6 +160,25 @@
     </div>
   </form>
 </div>
+
 <div *ngIf="loading" class="spinner-wrapper">
   <mat-spinner diameter="50" strokeWidth="5" color="primary"></mat-spinner>
+</div>
+
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="changePasswordModalLabel">Jelszó módosítása</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Bezárás"></button>
+      </div>
+
+      <div class="modal-body">
+        <app-password-change (passwordChanged)="close()" [selectedUserId]="user.id">
+        </app-password-change>
+      </div>
+
+    </div>
+  </div>
 </div>

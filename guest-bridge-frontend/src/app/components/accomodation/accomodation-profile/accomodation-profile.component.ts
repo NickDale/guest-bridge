@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Validators, FormBuilder } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { AccomodationDetail } from 'src/app/models/accommodation';
 import { ConnectionType } from 'src/app/models/property-connection';
@@ -18,13 +18,9 @@ export class AccomodationProfileComponent {
   accommodation!: AccomodationDetail;
 
   accomodationForm = this.fb.group({
-    address: [{ value: this.accommodation?.address, disabled: !this.isEditing }, [Validators.required]],
     contactName: [{ value: this.accommodation?.contact_name, disabled: !this.isEditing }],
     contactPhone: [{ value: this.accommodation?.contact_phone, disabled: !this.isEditing }],
     contactEmail: [{ value: this.accommodation?.contact_email, disabled: !this.isEditing }]
-    //todo: add more
-    //  address2: new FormControl({ value: this.accommodation?.address, disabled: !this.isEditing }, [Validators.required])
-
   });
 
   constructor(
@@ -51,11 +47,12 @@ export class AccomodationProfileComponent {
 
   save(): void {
     if (this.accomodationForm.valid) {
-      console.log('Form submitted', this.accomodationForm.value);
+      alert('Form submitted - ' + this.accomodationForm.value);
       // itt jöhetne egy save/update service hívás
     } else {
-      console.warn('Form is invalid');
+      alert('Form is invalid');
     }
+    this.toggleEdit();
   }
 
   get szallas_hu() {
@@ -77,8 +74,8 @@ export class AccomodationProfileComponent {
             this.accommodationService.setSelected(accommodation);
             this.updateForm(accommodation);
             this.loading = false;
+          } else {
           }
-
         },
         error: (err) => {
           console.error('Failed to fetch accommodation', err);
@@ -92,12 +89,33 @@ export class AccomodationProfileComponent {
 
   private updateForm(accommodation: AccomodationDetail): void {
     this.accomodationForm.setValue({
-      address: accommodation.address,
-      contactName :accommodation.contact_name,
-      contactEmail:accommodation.contact_email,
-      contactPhone:accommodation.contact_phone
+      contactName: accommodation.contact_name,
+      contactEmail: accommodation.contact_email,
+      contactPhone: accommodation.contact_phone
     });
     this.isEditing ? this.accomodationForm.enable() : this.accomodationForm.disable();
+  }
+
+  get addressString(): String {
+    const address = this.accommodation.address;
+    return [
+      address.postcode,
+      address.city,
+      address.street,
+      address.street_number
+    ].filter(part => !!part).join(', ');
+  }
+
+  get isAccommodationActive(): boolean {
+    return this.accommodation.status.toUpperCase() === 'ACTIVE';
+  }
+
+  get statusText(): string {
+    return this.isAccommodationActive ? 'Aktív' : 'Inaktív';
+  }
+
+  get statusClass(): string {
+    return this.isAccommodationActive ? 'text-success' : 'text-danger';
   }
 
 }

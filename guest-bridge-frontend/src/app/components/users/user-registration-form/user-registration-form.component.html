@@ -1,0 +1,39 @@
+<form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+
+    <div class="mb-3">
+        <label for="fullName" class="form-label">Teljes név (*)</label>
+        <input 
+            type="text" 
+            id="fullName" 
+            formControlName="fullName" 
+            class="form-control"
+            [ngClass]="{ 'is-invalid': submitted && form['fullName'].errors }"
+        >
+        <div *ngIf="submitted && form['fullName'].errors" class="invalid-feedback">
+            <div *ngIf="form['fullName'].errors['required']">A név kötelező.</div>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="email" class="form-label">Email cím (*)</label>
+        <input 
+            type="email" 
+            id="email" 
+            formControlName="email" 
+            class="form-control"
+            [ngClass]="{ 'is-invalid': submitted && form['email'].errors }"
+        >
+        <div *ngIf="submitted && form['email'].errors" class="invalid-feedback">
+            <div *ngIf="form['email'].errors['required']">Az email cím kötelező.</div>
+            <div *ngIf="form['email'].errors['email']">Érvényes email címet adjon meg.</div>
+        </div>
+    </div>
+    <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+        {{ errorMessage }}
+    </div>
+
+    <div class="text-end">
+        <button type="submit" class="btn btn-success">Felhasználó rögzítése</button>
+    </div>
+
+</form>

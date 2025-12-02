@@ -1,8 +1,8 @@
 from enum import Enum
 
-base_url = 'https://admin.szallas.hu'
-login_url = base_url + '/login/submit'
-reservation_detail_url = '/reservation/details?id='
+BASE_SZALLAS_HU_URL = 'https://admin.szallas.hu'
+LOGIN_URL = BASE_SZALLAS_HU_URL + '/login/submit'
+RESERVATION_DETAIL_URL = '/reservation/details?id='
 
 DEFAULT_DAY_DELAY = 20
 ALREADY_ARRIVED = 'Aktív: Megérkezett'
