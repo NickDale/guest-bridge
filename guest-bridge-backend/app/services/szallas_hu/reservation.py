@@ -35,7 +35,7 @@ class Reservation:
         data = {
             'szallashelyKulsoId': accommodation.id,
             'megrendeloNev': self.guest_name,
-            'megrendeloEmailCim': self.guest_email,
+            'megrendeloEmailCim': self.guest_email if (self.guest_email and '@' in self.guest_email) else 'noemail@nomail.com',
             'megrendeloTelefonSzam': self.guest_phone,
             'megrendeloAllampolgarsag': {
                 'kulsoId': VENDEGEM_HUN_ID

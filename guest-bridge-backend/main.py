@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
-from app.routers import users, authentication, accommodations, test_router
+from app.routers import users, authentication, accommodation_router, test_router
 
 app = FastAPI(
     root_path='/api',
@@ -29,8 +29,8 @@ app.add_middleware(
 app.include_router(users.router)
 app.include_router(users.admin_router)
 app.include_router(authentication.router)
-app.include_router(accommodations.router)
-app.include_router(accommodations.admin_router)
+app.include_router(accommodation_router.router)
+app.include_router(accommodation_router.admin_router)
 app.include_router(test_router.router)
 
 if __name__ == "__main__":

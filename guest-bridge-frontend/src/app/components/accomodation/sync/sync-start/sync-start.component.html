@@ -1,4 +1,3 @@
-
 <!--
 <form [formGroup]="szallasHuLoginForm" (ngSubmit)="onSubmit()">
 
@@ -51,17 +50,19 @@
 -->
 
 <div class="modal-body">
-    
+
     <form *ngIf="!is2FaRequired" [formGroup]="szallasHuLoginForm" (ngSubmit)="onSubmit()">
-        
+
         <div class="mb-3">
             <label for="username" class="form-label">Felhasználónév (Email)</label>
             <input type="email" id="username" formControlName="username" class="form-control"
-                   [class.is-invalid]="szallasHuLoginForm.get('username')?.invalid && (szallasHuLoginForm.get('username')?.touched || submitted)">
-            <div *ngIf="szallasHuLoginForm.get('username')?.errors?.['required'] && (szallasHuLoginForm.get('username')?.touched || submitted)" class="invalid-feedback">
+                [class.is-invalid]="szallasHuLoginForm.get('username')?.invalid && (szallasHuLoginForm.get('username')?.touched || submitted)">
+            <div *ngIf="szallasHuLoginForm.get('username')?.errors?.['required'] && (szallasHuLoginForm.get('username')?.touched || submitted)"
+                class="invalid-feedback">
                 A felhasználónév megadása kötelező.
             </div>
-            <div *ngIf="szallasHuLoginForm.get('username')?.errors?.['email'] && (szallasHuLoginForm.get('username')?.touched || submitted)" class="invalid-feedback">
+            <div *ngIf="szallasHuLoginForm.get('username')?.errors?.['email'] && (szallasHuLoginForm.get('username')?.touched || submitted)"
+                class="invalid-feedback">
                 Érvényes email címet adjon meg.
             </div>
         </div>
@@ -70,18 +71,21 @@
             <label for="password" class="form-label">Jelszó</label>
             <div class="input-group">
                 <input [type]="passwordFieldType" id="password" formControlName="password" class="form-control"
-                       [class.is-invalid]="szallasHuLoginForm.get('password')?.invalid && (szallasHuLoginForm.get('password')?.touched || submitted)">
-                <button type="button" class="btn btn-outline-secondary" (click)="togglePasswordVisibility()" title="Jelszó mutatása/elrejtése">
-                    <i class="bi" [ngClass]="{'bi-eye-slash': passwordFieldType === 'password', 'bi-eye': passwordFieldType === 'text'}"></i>
+                    [class.is-invalid]="szallasHuLoginForm.get('password')?.invalid && (szallasHuLoginForm.get('password')?.touched || submitted)">
+                <button type="button" class="btn btn-outline-secondary" (click)="togglePasswordVisibility()"
+                    title="Jelszó mutatása/elrejtése">
+                    <i class="bi"
+                        [ngClass]="{'bi-eye-slash': passwordFieldType === 'password', 'bi-eye': passwordFieldType === 'text'}"></i>
                 </button>
             </div>
-            <div *ngIf="szallasHuLoginForm.get('password')?.errors?.['required'] && (szallasHuLoginForm.get('password')?.touched || submitted)" class="invalid-feedback d-block">
+            <div *ngIf="szallasHuLoginForm.get('password')?.errors?.['required'] && (szallasHuLoginForm.get('password')?.touched || submitted)"
+                class="invalid-feedback d-block">
                 A jelszó megadása kötelező.
             </div>
         </div>
-        
+
         <div *ngIf="errorMessage" class="alert alert-danger mt-3">{{ errorMessage }}</div>
-        
+
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Mégsem</button>
             <button type="submit" class="btn btn-primary" [disabled]="isProcessing || szallasHuLoginForm.invalid">
@@ -90,7 +94,30 @@
             </button>
         </div>
     </form>
-    
+
     <form *ngIf="is2FaRequired" [formGroup]="twoFactorForm" (ngSubmit)="submit2faCode()">
-        </form>
+        <div class="alert alert-info">
+            Kérjük, adja meg a Szállás.hu-tól kapott kódot.
+        </div>
+
+        <div class="mb-3">
+            <label for="twoFactorCode" class="form-label">Ellenőrző kód</label>
+            <input type="text" id="twoFactorCode" formControlName="twoFactorCode"
+                class="form-control form-control-lg text-center" placeholder="000000" maxlength="6"
+                [class.is-invalid]="twoFactorForm.get('twoFactorCode')?.invalid && (twoFactorForm.get('twoFactorCode')?.touched || submitted)">
+            <div *ngIf="twoFactorForm.get('twoFactorCode')?.invalid" class="invalid-feedback">
+                Érvényes 6 jegyű számkód szükséges.
+            </div>
+        </div>
+
+        <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+        <div class="modal-footer px-0 pb-0">
+            <button type="button" class="btn btn-link"
+                (click)="is2FaRequired = false; szallasHuLoginForm.enable()">Vissza a belépéshez</button>
+            <button type="submit" class="btn btn-primary" [disabled]="isProcessing || twoFactorForm.invalid">
+                <span *ngIf="isProcessing" class="spinner-border spinner-border-sm me-2"></span>
+                Kód ellenőrzése
+            </button>
+        </div>
+    </form>
 </div>

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from colorama import Fore, Style
 from playwright.sync_api import Page
@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.models.models import SyncHistory, SyncHistoryDetail, Accommodation
 from app.services import accommodation_service
+from app.services.szallas_hu.constatnt import DEFAULT_DAY_DELAY
 from app.services.szallas_hu.reservation import Reservation
 from app.services.szallas_hu.szallas_hu_connection import collect_reservations
 from app.services.vendegem.helper import VendegemAccommodation, VENDEGEM_RESERVATION_EXT_ID
@@ -17,6 +18,11 @@ from app.services.vendegem.vendegem_connector import Vendegem
 def start_sync(page: Page, internal_accommodation_id: int, started_by_user_id: str,
                from_date: datetime = None, to_date: datetime = None):
     try:
+        if from_date is None:
+            from_date = datetime.now()
+        if to_date is None:
+            to_date = from_date + timedelta(days=DEFAULT_DAY_DELAY)
+
         db_session = next(get_db())
         accommodation = accommodation_service.accommodation_by_id(internal_accommodation_id, db_session)
 
@@ -200,7 +206,7 @@ def find_correct_accommodation_in_vendegem(vendegem: Vendegem, accommodation: Ac
         return None
 
 
-def group_reservations(reservations: list[Reservation], cancelled_status_name: str = 'Lemondott'):
+def group_reservations(reservations: list[Reservation], cancelled_status_name: str = 'GUEST_CANCELED'):
     cancelled_reservations = [
         res for res in reservations
         if res.status.strip().upper() == cancelled_status_name.upper()
