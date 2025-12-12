@@ -67,7 +67,7 @@ def check_accommodation_connection(accommodation_id: int, connection_type: str, 
                 print(f"Hiba történt a keresés során: {e}")
                 return False
 
-    return False
+    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid connection type")
 
 
 def external_login(accommodation_id: int,
@@ -145,7 +145,7 @@ def szallas_hu_login_flow(session_id: str, username: str, password: str):
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=False)
 
-        # local test
+        # local tests
         # browser = p.chromium.connect_over_cdp("http://localhost:9222")
         page = browser.new_page()
 
