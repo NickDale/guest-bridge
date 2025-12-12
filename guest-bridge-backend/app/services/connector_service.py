@@ -1,7 +1,6 @@
 import threading
 import time
 import uuid
-from datetime import datetime
 
 from fastapi import HTTPException
 from playwright.sync_api import sync_playwright, Error
@@ -144,10 +143,10 @@ def szallas_hu_connection(ext_login_request: ExternalLoginRequest,
 
 def szallas_hu_login_flow(session_id: str, username: str, password: str):
     with sync_playwright() as p:
-        # browser = p.chromium.launch(headless=False)
+        browser = p.chromium.launch(headless=False)
 
         # local test
-        browser = p.chromium.connect_over_cdp("http://localhost:9222")
+        # browser = p.chromium.connect_over_cdp("http://localhost:9222")
         page = browser.new_page()
 
         p_session = playwright_sessions[session_id]
@@ -206,16 +205,16 @@ def szallas_hu_login_flow(session_id: str, username: str, password: str):
             if page.locator(close_button_selector).count() > 0:
                 page.locator(close_button_selector).click()
 
-                page.wait_for_selector(modal_selector, state="detached")
+                # page.wait_for_selector(modal_selector, state="detached")
                 print("Modal bezárva.")
 
         try:
             p_session["step"] = "sync_started"
             start_sync(page,
                        p_session["data"]['accommodation_id'],
-                       str(p_session["data"]['started_by']),
-                       from_date=datetime(2025, 9, 1),
-                       to_date=datetime(2025, 11, 1)
+                       str(p_session["data"]['started_by'])
+                       # ,from_date=datetime(2025, 9, 1),
+                       # to_date=datetime(2025, 11, 1)
                        )
             p_session["step"] = "done"
             p_session["last_update"] = time.time()

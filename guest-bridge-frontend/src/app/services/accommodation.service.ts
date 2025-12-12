@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, filter, Observable, switchMap, map, throwError, catchError, interval, delay, takeWhile, tap } from 'rxjs';
+import { BehaviorSubject, filter, Observable, switchMap, map, throwError, catchError, interval, delay, takeWhile, tap, timer } from 'rxjs';
 import { ConnectionStatus, ConnectionType, Property } from '../models/property-connection';
 import { AccommodationCreationRequest, Accomodation, AccomodationDetail } from '../models/accommodation';
 import { environment } from 'src/enviroments/environment';
@@ -107,42 +107,45 @@ export class AccommodationService {
       `${this.apiUrl}/accommodations/${accommodationId}/${this.getEnumKey(connectionType)}/login`,
       { username: username, password: password }
     )
-    .pipe(
-        delay(2000), 
-        
+      .pipe(
+        delay(2000),
         switchMap(res => {
-            const sessionId = res.session_id;
+          const sessionId = res.session_id;
 
-            return this.getSessionStatus(accommodationId, connectionType, sessionId); 
+          return timer(0, 15000).pipe(
+            switchMap(() => this.getSessionStatus(accommodationId, connectionType, sessionId)),
+            takeWhile(status => status.step === 'started', true),
+            filter(status => status.step !== 'started')
+          );
         })
-    );
-     /* .pipe(
-        switchMap(
-          res => {
-            const sessionId = res.session_id
+      );
+    /* .pipe(
+       switchMap(
+         res => {
+           const sessionId = res.session_id
 
-            return interval(2000).pipe(
-                // Várjunk egy keveset az első lekérdezés előtt, hogy a backend is elinduljon
-                delay(100), 
-                switchMap(() => this.getSessionStatus(accommodationId,connectionType,sessionId)), 
-                
-                // takeWhile: Addig megy a polling, amíg nincs DONE vagy WAITING_2FA vagy FAILED
-                takeWhile(status => status.step !== 'done' && status.step !== 'waiting_2fa' && status.step !== 'failed', true),
-                
-                // Visszaadja az utolsó állapotot (ami az exit condition volt)
-                tap(status => {
-                    // Itt megállítjuk a pollingot, de az utolsó értéket átadjuk a feliratkozónak
-                    if (status.step === 'done' || status.step === 'failed' || status.step === 'waiting_2fa') {
-                        // A takeWhile leállítja a streamet
-                    }
-                }),
-                
-                // Ez a map csak az utolsó értéket adja át
-                map(status => status) 
-            );
-          }
-        )
-      );*/
+           return interval(2000).pipe(
+               // Várjunk egy keveset az első lekérdezés előtt, hogy a backend is elinduljon
+               delay(100), 
+               switchMap(() => this.getSessionStatus(accommodationId,connectionType,sessionId)), 
+               
+               // takeWhile: Addig megy a polling, amíg nincs DONE vagy WAITING_2FA vagy FAILED
+               takeWhile(status => status.step !== 'done' && status.step !== 'waiting_2fa' && status.step !== 'failed', true),
+               
+               // Visszaadja az utolsó állapotot (ami az exit condition volt)
+               tap(status => {
+                   // Itt megállítjuk a pollingot, de az utolsó értéket átadjuk a feliratkozónak
+                   if (status.step === 'done' || status.step === 'failed' || status.step === 'waiting_2fa') {
+                       // A takeWhile leállítja a streamet
+                   }
+               }),
+               
+               // Ez a map csak az utolsó értéket adja át
+               map(status => status) 
+           );
+         }
+       )
+     );*/
   }
 
   getEnumKey(value: ConnectionType): string | undefined {

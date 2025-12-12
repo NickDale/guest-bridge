@@ -52,7 +52,7 @@ def collect_reservations(page: Page, accommodation_ext_id: str,
                 , key=lambda x: datetime.strptime(x['checkIn'], "%Y-%m-%d")
             )
             # test miatt:
-            sorted_data = data
+            # sorted_data = data
             return reservation_details(page, accommodation_ext_id, sorted_data)
         except Exception as e:
             print(f"❌ Hiba: A válasz nem JSON formátumú. {e}")

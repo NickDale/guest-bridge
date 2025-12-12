@@ -75,14 +75,19 @@ export class SyncStartComponent {
         next: status => {
           this.isProcessing = false;
 
+          console.log("nnnnnnnn")
+          console.log("status.step")
+          console.log(status.step)
           if (status.step === 'waiting_2fa') {
             this.sessionId = status.session_id;
             this.is2FaRequired = true;
             this.szallasHuLoginForm.disable();
 
           } else if (status.step === 'failed') {
+              console.log("failed")
             this.errorMessage = 'Ismeretlen hiba a bejelentkezési folyamat során.';
           } else {
+            console.log("ELSE")
             this.syncStarted.emit();
             this.closeModal();
           }
